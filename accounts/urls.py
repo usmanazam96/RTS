@@ -16,7 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from accounts import views
+
+app_name = 'accounts'
 urlpatterns = [
-    path("", views.home, name='accounts home'),
+    path("", views.home, name='home'),
+    path('login/', views.loginPage, name="login"),
+    path('logout/', views.logoutUser, name="logout"),
+    path('createfaculty/', views.createFaculty, name="create_faculty"),
+    path('createstudent/', views.createStudent, name="create_student"),
+    path('createadmin/', views.createAdmin, name="create_admin"),
+
 
 ]

@@ -19,6 +19,9 @@ from django.contrib import admin
 from django.urls import path
 from student import views
 
+app_name = 'student'
+
+
 urlpatterns = [
     path("", views.home, name='student home'),
 

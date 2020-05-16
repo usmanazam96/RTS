@@ -24,5 +24,5 @@ class StudentForm(forms.ModelForm):
 
 class AdminForm(forms.ModelForm):
     class Meta:
-        model = Student
+        model = Admin
         exclude = ['user']

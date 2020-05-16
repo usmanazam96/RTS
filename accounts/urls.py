@@ -25,6 +25,8 @@ urlpatterns = [
     path('createfaculty/', views.createFaculty, name="create_faculty"),
     path('createstudent/', views.createStudent, name="create_student"),
     path('createadmin/', views.createAdmin, name="create_admin"),
-
+    path('faculty/', views.faculty_list_view, name="faculty_list"),
+    path('students/', views.student_list_view, name="students_list"),
+    path('admins/', views.admin_list_view, name="students_list"),
 
 ]

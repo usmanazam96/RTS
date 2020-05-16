@@ -11,8 +11,7 @@
 
     <!-- iCheck -->
     <link rel="stylesheet" href="{% static "plugins/icheck-bootstrap/icheck-bootstrap.min.css" %}">
-    <!-- JQVMap -->
-    <link rel="stylesheet" href="{% static "plugins/jqvmap/jqvmap.min.css" %}">
+
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{% static "plugins/overlayScrollbars/css/OverlayScrollbars.min.css" %}">
 
@@ -24,49 +23,19 @@
     <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
     <!-- Ionicons -->
     <link rel="stylesheet" href=https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static "dist/css/adminlte.min.css" %}">
 
-    <!-- daterange picker -->
-    <link rel="stylesheet" href="{% static "plugins/daterangepicker/daterangepicker.css" %}">
-    <!-- Tempusdominus Bbootstrap 4 -->
+      <!-- Tempusdominus Bbootstrap 4 -->
     <link rel="stylesheet" href="{% static "plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css" %}">
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="{% static "plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css" %}">
-    <!-- Google Font: Source Sans Pro -->
-    <link href="{% static "https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet" %}">
-  <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
+       <!-- Google Font: Source Sans Pro -->
+    <link href=https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
 
     <!-- iCheck -->
     <link rel="stylesheet" href="{% static "plugins/icheck-bootstrap/icheck-bootstrap.min.css" %}">
-    <!-- JQVMap -->
-    <link rel="stylesheet" href="{% static "plugins/jqvmap/jqvmap.min.css" %}">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{% static "plugins/overlayScrollbars/css/OverlayScrollbars.min.css" %}">
-
-    <!-- summernote -->
-    <link rel="stylesheet" href="{% static "plugins/summernote/summernote-bs4.css" %}">
-
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="{% static "https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" %}">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{% static "dist/css/adminlte.min.css" %}">
-
-    <!-- daterange picker -->
-    <link rel="stylesheet" href="{% static "plugins/daterangepicker/daterangepicker.css" %}">
-    <!-- Tempusdominus Bbootstrap 4 -->
-    <link rel="stylesheet" href="{% static "plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css" %}">
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="{% static "plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css" %}">
-    <!-- Google Font: Source Sans Pro -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
     {% block css_block %}
     {% endblock %}
@@ -554,30 +523,9 @@
 <script src="{% static "plugins/bootstrap-switch/js/bootstrap-switch.min.js" %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static "dist/js/adminlte.min.js" %}"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="{% static "dist/js/demo.js" %}"></script>
+
 <!-- Page script -->
-<script type="text/javascript">
-    $(function () {
-        //Initialize Select2 Elements
-        $('.select2').select2()
 
-        //Initialize Select2 Elements
-        $('.select2bs4').select2({
-            theme: 'bootstrap4'
-        })
-        //Timepicker
-        $('#timepicker,#timepicker2').datetimepicker({
-            format: 'LT'
-        })
-
-
-    });
-
-    function myfun12() {
-        window.open("schedule-template-master/index.html", '_blank');
-    }
-</script>
 
 
     {% block script_block %}

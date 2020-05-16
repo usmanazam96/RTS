@@ -1,0 +1,174 @@
+{% extends "RTS/base.html" %}
+{% load static %}
+{% block css_block %}
+     <!-- DataTables -->
+    <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
+
+
+{% endblock %}
+{% block content_block %}
+    <div class="row">
+    <div class="col-12">
+    <div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{{ card_title }}</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table id="tb" class="table  table-striped table-hover table-responsive-sm overflow-auto">
+            <thead>
+            <tr>
+                <th>Profile Pic</th>
+                <th>Name</th>
+                <th>User Name</th>
+                <th>email</th>
+                <th>Groups</th>
+                <th>Account Status</th>
+                <th>Bio</th>
+                <th>Room</th>
+                <th>Options</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if faculty_list %}
+                {% for faculty in faculty_list %}
+                    <tr>
+                        <td>
+                            <div class="col-md-4">
+                                {% if faculty.profile_pic %}
+                                    <img src="/media/{{ faculty.profile_pic }}" alt="User Avatar"
+                                         class="img-size-50 mr-4 img-circle">
+                                {% else %}
+                                    <img src="/media/common/default_user.png" alt="User Avatar"
+                                         class="img-size-50 mr-4 img-circle">
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+
+
+                            {{ faculty.first_name }} {{ faculty.last_name }}
+
+
+                        </td>
+                        <td>{{ faculty.user.username }}</td>
+                        <td>{{ faculty.user.email }}</td>
+                        <td>
+                            <ol>{% for group in faculty.user.groups.all %}
+                                <li>
+                                    {{ group }}
+                                </li>
+                            {% endfor %}
+                            </ol>
+                        </td>
+                        <td>{{ faculty.user.is_active }}</td>
+                        <td>{{ faculty.bio }}</td>
+                        <td>{{ faculty.room_location }}</td>
+
+                        <td>
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    Action
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Separated link</a>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            {% else %}
+                  <tr><td colspan="9" class="text-info text-center"> No Record Found</td></tr>
+            {% endif %}
+
+            </tbody>
+        </table>
+
+    </div>
+    <div class="modal fade" id="modalapprove">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Approve Request</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="approve_row">
+                    <div class="bootstrap-timepicker">
+                        <div class="form-group">
+                            <label>Start Time</label>
+
+                            <div class="input-group date" id="timepicker" data-target-input="nearest">
+                                <input type="text" id="starttime_add" class="form-control datetimepicker-input"
+                                       data-target="#timepicker"/>
+                                <div class="input-group-append" data-target="#timepicker" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                </div>
+                            </div>
+                            <!-- /.input group -->
+                        </div>
+                        <!-- /.form group -->
+                    </div>
+
+                    <div class="bootstrap-timepicker">
+                        <div class="form-group">
+                            <label>Meeting Date</label>
+
+                            <div class="input-group date" id="timepicker1" data-target-input="nearest">
+                                <input type="text" id="date_add" class="form-control datetimepicker-input"
+                                       data-target="#timepicker1"/>
+                                <div class="input-group-append" data-target="#timepicker1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="far fa-calendar"></i></div>
+                                </div>
+                            </div>
+                            <!-- /.input group -->
+                        </div>
+                        <!-- /.form group -->
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Duration">Duration(min)</label>
+                        <div class="input-group mb-3">
+                            <input type="number" min='5' id="duration" class="form-control">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="far fa-clock"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="approveMeeting" class="btn btn-primary">Approve Meeting</button>
+                </div>
+
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+{% endblock %}
+
+
+{% block script_block %}
+    <script>
+        $(function () {
+            $('#tb').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true,
+                "scrollX": true,
+            });
+        });
+    </script>
+
+{% endblock %}

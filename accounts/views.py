@@ -78,11 +78,61 @@ def createAdmin(request):
             return render(request, 'accounts/admin_create_form.html', context)
 
 
+def edit_admin(request, id=0):
+    if id == 0:
+        messages.error(request, 'Not admin found against this id')
+        return redirect('accounts:admins_list')
+    else:
+        try:
+            admin: Admin = Admin.objects.get(pk=id)
+        except admin.DoesNotExist:
+            messages.error(request, 'Admin Not found against id or In-Valid id')
+            return redirect('accounts:admins_list')
+    if request.method == "GET":
+        form = AdminForm(instance=admin)
+        context = dict(page_title='Accounts-Edit Admin', h1_title='Edit Admin', url='editadmin',
+                       card_title="Account Information", form=form, id=id)
+        return render(request, 'accounts/admin_form.html', context)
+    else:
+        pic = admin.profile_pic
+        registered = False
+        form = AdminForm(data=request.POST, instance=admin, files=request.FILES)
+        if form.is_valid():
+            admin = form.save()
+            registered = True
+        if registered:
+            messages.success(request, 'Account created  Successfully')
+            return redirect('accounts:admins_list')
+        else:
+            messages.error(request, 'Invalid Information.Check the  Wrong Information')
+            context = dict(page_title='Accounts-Edit Admin', h1_title='Edit Admin', url='editadmin',
+                           card_title="Account Information", form=form, id=id)
+            return render(request, 'accounts/admin_form.html', context)
+
+
 def admin_list_view(request):
     admin_list = Admin.objects.all()
     context = dict(page_title='Accounts-Admins', h1_title='Admins', url='Admins',
                    card_title="All Admins", admin_list=admin_list)
     return render(request, 'accounts/admin_list.html', context)
+
+
+def remove_admin_group(request, id):
+    if id > 0:
+        try:
+            user: User = User.objects.get(pk=id)
+            if user.groups.filter(name='admin').exists():
+                group = Group.objects.get(name='admin')
+                user.groups.remove(group)
+                messages.info(request, 'admin group is removed')
+            else:
+                messages.info(request, 'admin group is already removed')
+
+        except User.DoesNotExist:
+            messages.error(request, 'User Not found against id or In-Valid id')
+    else:
+        messages.error(request, 'User Not found against id or In-Valid id')
+    return redirect('accounts:users_list')
 
 
 # faculty
@@ -128,6 +178,56 @@ def faculty_list_view(request):
     context = dict(page_title='Accounts-Faculty', h1_title='Faculty', url='Faculty',
                    card_title="All Faculty", faculty_list=faculty_list)
     return render(request, 'accounts/faculty_list.html', context)
+
+
+def edit_faculty(request, id=0):
+    if id == 0:
+        messages.error(request, 'Not faculty found against this id')
+        return redirect('accounts:faculty_list')
+    else:
+        try:
+            faculty: Faculty = Faculty.objects.get(pk=id)
+        except faculty.DoesNotExist:
+            messages.error(request, 'Faculty Not found against id or In-Valid id')
+            return redirect('accounts:faculty_list')
+    if request.method == "GET":
+        form = FacultyForm(instance=faculty)
+        context = dict(page_title='Accounts-Edit Faculty', h1_title='Edit Faculty', url='editfaculty',
+                       card_title="Account Information", form=form, id=id)
+        return render(request, 'accounts/faculty_form.html', context)
+    else:
+        pic = faculty.profile_pic
+        registered = False
+        form = FacultyForm(data=request.POST, instance=faculty, files=request.FILES)
+        if form.is_valid():
+            faculty = form.save()
+            registered = True
+        if registered:
+            messages.success(request, 'Account created  Successfully')
+            return redirect('accounts:faculty_list')
+        else:
+            messages.error(request, 'Invalid Information.Check the  Wrong Information')
+            context = dict(page_title='Accounts-Edit Faculty', h1_title='Edit Faculty', url='editfaculty',
+                           card_title="Account Information", form=form, id=id)
+            return render(request, 'accounts/faculty_form.html', context)
+
+
+def remove_faculty_group(request, id):
+    if id > 0:
+        try:
+            user: User = User.objects.get(pk=id)
+            if user.groups.filter(name='faculty').exists():
+                group = Group.objects.get(name='faculty')
+                user.groups.remove(group)
+                messages.info(request, 'faculty group is removed')
+            else:
+                messages.info(request, 'faculty group is already removed')
+
+        except User.DoesNotExist:
+            messages.error(request, 'User Not found against id or In-Valid id')
+    else:
+        messages.error(request, 'User Not found against id or In-Valid id')
+    return redirect('accounts:users_list')
 
 
 # student
@@ -228,9 +328,8 @@ def edit_student(request, id=0):
     else:
         pic = student.profile_pic
         registered = False
-        form = StudentForm(data=request.POST, instance=student,files=request.FILES)
+        form = StudentForm(data=request.POST, instance=student, files=request.FILES)
         if form.is_valid():
-
             student = form.save()
             registered = True
         if registered:
@@ -248,6 +347,24 @@ def student_list_view(request):
     context = dict(page_title='Accounts-Students', h1_title='Students', url='Students',
                    card_title="All Students", student_list=student_list)
     return render(request, 'accounts/student_list.html', context)
+
+
+def remove_student_group(request, id):
+    if id > 0:
+        try:
+            user: User = User.objects.get(pk=id)
+            if user.groups.filter(name='student').exists():
+                group = Group.objects.get(name='student')
+                user.groups.remove(group)
+                messages.info(request, 'student group is removed')
+            else:
+                messages.info(request, 'student group is already removed')
+
+        except User.DoesNotExist:
+            messages.error(request, 'User Not found against id or In-Valid id')
+    else:
+        messages.error(request, 'User Not found against id or In-Valid id')
+    return redirect('accounts:users_list')
 
 
 # User
@@ -288,7 +405,7 @@ def active_user(request, id=0):
             else:
                 messages.info(request, 'user is already Active')
 
-        except user.DoesNotExist:
+        except User.DoesNotExist:
             messages.error(request, 'User Not found against id or In-Valid id')
     else:
         messages.error(request, 'User Not found against id or In-Valid id')
@@ -303,7 +420,7 @@ def edit_user(request, id=0):
     else:
         try:
             user: User = User.objects.get(pk=id)
-        except user.DoesNotExist:
+        except User.DoesNotExist:
             messages.error(request, 'User Not found against id or In-Valid id')
             return redirect('accounts:users_list')
     if request.method == "GET":

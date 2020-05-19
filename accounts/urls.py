@@ -37,5 +37,10 @@ urlpatterns = [
     path('un_active_user/<int:id>/', views.un_active_user, name="un_active_user"),
     path('edit_user/<int:id>/', views.edit_user, name="edit_user"),
     path('edit_student/<int:id>/', views.edit_student, name="edit_student"),
+    path('edit_faculty/<int:id>/', views.edit_faculty, name="edit_faculty"),
+    path('edit_admin/<int:id>/', views.edit_admin, name="edit_admin"),
+    path('remove_admin_group/<int:id>/', views.remove_admin_group, name="remove_admin_group"),
+    path('remove_faculty_group/<int:id>/', views.remove_faculty_group, name="remove_faculty_group"),
+    path('remove_student_group/<int:id>/', views.remove_student_group, name="remove_student_group"),
 
 ]

@@ -60,8 +60,20 @@
                                         {% csrf_token %}
                                         <button class="dropdown-item" type="submit">Un Active User</button>
                                     </form>
+                                    <form method="post" action="{% url 'accounts:remove_admin_group' user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Remove Admin Group</button>
+                                    </form>
+                                     <form method="post" action="{% url 'accounts:remove_faculty_group' user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Remove Faculty Group</button>
+                                    </form>
+                                     <form method="post" action="{% url 'accounts:remove_student_group' user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Remove Student Group</button>
+                                    </form>
                                     <a class="dropdown-item" href="{% url 'accounts:edit_user' user.id %}">Edit User</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#">Separated link</a>
                                 </div>

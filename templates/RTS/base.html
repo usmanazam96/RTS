@@ -26,9 +26,10 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static "dist/css/adminlte.min.css" %}">
 
-      <!-- Tempusdominus Bbootstrap 4 -->
-    <link rel="stylesheet" href="{% static "plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css" %}">
-       <!-- Google Font: Source Sans Pro -->
+    <!-- Tempusdominus Bbootstrap 4 -->
+    <link rel="stylesheet"
+          href="{% static "plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css" %}">
+    <!-- Google Font: Source Sans Pro -->
     <link href=https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
 
@@ -69,7 +70,8 @@
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="{% static "dist/img/user1-128x128.jpg"%}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                            <img src="{% static "dist/img/user1-128x128.jpg" %}" alt="User Avatar"
+                                 class="img-size-50 mr-3 img-circle">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
                                     Brad Diesel
@@ -219,7 +221,8 @@
             <!-- Sidebar user panel (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
-                    <img src="{%  static "dist/img/user2-160x160.jpg"%}" class="img-circle elevation-2" alt="User Image">
+                    <img src="{% static "dist/img/user2-160x160.jpg" %}" class="img-circle elevation-2"
+                         alt="User Image">
                 </div>
                 <div class="info">
                     <a href="#" class="d-block">Alexander Pierce</a>
@@ -241,49 +244,115 @@
                         </a>
 
                     </li>
-
-                    <li class="nav-item has-treeview">
+                    <li class="nav-header">Accounts</li>
+                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-copy"></i>
                             <p>
-                                Accounts
+                                Users
                                 <i class="fas fa-angle-left right"></i>
 
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-
                             <li class="nav-item">
-                                <a href="pages/layout/boxed.html" class="nav-link">
+                                <a href="{% url 'accounts:users_list' %}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>All User</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-copy"></i>
+                            <p>
+                                Faculty
+                                <i class="fas fa-angle-left right"></i>
+
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'accounts:faculty_list' %}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Faculty Record</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'accounts:create_faculty' %}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Create Faculty Account</p>
                                 </a>
                             </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-copy"></i>
+                            <p>
+                                Student
+                                <i class="fas fa-angle-left right"></i>
+
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="pages/layout/fixed-sidebar.html" class="nav-link">
+                                <a href="{% url 'accounts:students_list' %}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Students Record</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'accounts:create_student' %}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Create Student Account</p>
                                 </a>
                             </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-copy"></i>
+                            <p>
+                                Admins
+                                <i class="fas fa-angle-left right"></i>
+
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="pages/layout/fixed-topnav.html" class="nav-link">
+                                <a href="{% url 'accounts:admins_list' %}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Admins Record</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'accounts:create_admin' %}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Create Admin Account</p>
                                 </a>
                             </li>
+                        </ul>
+                    </li>
+                     <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-copy"></i>
+                            <p>
+                                My Account
+                                <i class="fas fa-angle-left right"></i>
+
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="pages/layout/fixed-footer.html" class="nav-link">
+                                <a href="{% url 'accounts:change_password' %}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Fixed Footer</p>
+                                    <p>Change Password</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="pages/layout/collapsed-sidebar.html" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Collapsed Sidebar</p>
-                                </a>
-                            </li>
-                             <li class="nav-item">
                                 <a href="{% url 'accounts:logout' %}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Logout</p>
@@ -291,7 +360,6 @@
                             </li>
                         </ul>
                     </li>
-
 
                 </ul>
             </nav>
@@ -320,18 +388,20 @@
 
         <!-- Main content -->
         <section class="content">
-        <div class="row"><div class="col-12">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div></div>
+            <div class="row">
+                <div class="col-12">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
             {% block content_block %}
             {% endblock %}
 
@@ -528,8 +598,8 @@
 
 
 
-    {% block script_block %}
-    {% endblock %}
+{% block script_block %}
+{% endblock %}
 
-    </body>
-    </html>
+</body>
+</html>

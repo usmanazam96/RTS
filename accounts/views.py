@@ -117,6 +117,52 @@ def admin_list_view(request):
     return render(request, 'accounts/admin_list.html', context)
 
 
+def createAdminWithExistingUser(request, id=0):
+    if id == 0:
+        messages.error(request, 'Not user found against this id')
+        return redirect('accounts:admins_list')
+    else:
+        try:
+            user: User = User.objects.get(pk=id)
+        except user.DoesNotExist:
+            messages.error(request, 'User Not found against id or In-Valid id')
+            return redirect('accounts:admins_list')
+
+        if Admin.objects.filter(user=user).exists():
+            messages.info(request, 'Admin With This Account Already Exist')
+            messages.info(request, 'user added in Admin group again')
+            group = Group.objects.get(name='admin')
+            user.groups.add(group)
+            messages.info(request, 'User is Added in Admin Group')
+            return redirect('accounts:admins_list')
+
+    if request.method == "GET":
+        admin_form = AdminForm()
+        context = dict(page_title='Accounts-Create Admin', h1_title='New Admin Account', url='createadmin',
+                       card_title="Account Information", form=admin_form, id=id)
+        return render(request, 'accounts/admin_create_form_with_existing_user.html', context)
+    else:
+        registered = False
+        admin_form = AdminForm(data=request.POST)
+        if admin_form.is_valid():
+            admin: Admin = admin_form.save(commit=False)
+            admin.user = user
+            if 'profile_pic' in request.FILES:
+                admin.profile_pic = request.FILES['profile_pic']
+            admin.save()
+            group = Group.objects.get(name='admin')
+            user.groups.add(group)
+            registered = True
+        if registered:
+            messages.success(request, 'Account created  Successfully')
+            return redirect('accounts:admins_list')
+        else:
+            messages.error(request, 'Invalid Information.Check the  Wrong Information')
+            context = dict(page_title='Accounts-Create admin', h1_title='New admin Account', url='createadmin',
+                           card_title="Account Information", form=admin_form, id=id)
+            return render(request, 'accounts/admin_create_form_with_existing_user.html', context)
+
+
 def remove_admin_group(request, id):
     if id > 0:
         try:
@@ -212,6 +258,52 @@ def edit_faculty(request, id=0):
             return render(request, 'accounts/faculty_form.html', context)
 
 
+def createFacultyWithExistingUser(request, id=0):
+    if id == 0:
+        messages.error(request, 'Not user found against this id')
+        return redirect('accounts:facultys_list')
+    else:
+        try:
+            user: User = User.objects.get(pk=id)
+        except user.DoesNotExist:
+            messages.error(request, 'User Not found against id or In-Valid id')
+            return redirect('accounts:facultys_list')
+
+        if Faculty.objects.filter(user=user).exists():
+            messages.info(request, 'Faculty With This Account Already Exist')
+            messages.info(request, 'user added in Faculty group again')
+            group = Group.objects.get(name='faculty')
+            user.groups.add(group)
+            messages.info(request, 'User is Added in Faculty Group')
+            return redirect('accounts:faculty_list')
+
+    if request.method == "GET":
+        faculty_form = FacultyForm()
+        context = dict(page_title='Accounts-Create Faculty', h1_title='New Faculty Account', url='createfaculty',
+                       card_title="Account Information", form=faculty_form, id=id)
+        return render(request, 'accounts/faculty_create_form_with_existing_user.html', context)
+    else:
+        registered = False
+        faculty_form = FacultyForm(data=request.POST)
+        if faculty_form.is_valid():
+            faculty: Faculty = faculty_form.save(commit=False)
+            faculty.user = user
+            if 'profile_pic' in request.FILES:
+                faculty.profile_pic = request.FILES['profile_pic']
+            faculty.save()
+            group = Group.objects.get(name='faculty')
+            user.groups.add(group)
+            registered = True
+        if registered:
+            messages.success(request, 'Account created  Successfully')
+            return redirect('accounts:faculty_list')
+        else:
+            messages.error(request, 'Invalid Information.Check the  Wrong Information')
+            context = dict(page_title='Accounts-Create faculty', h1_title='New faculty Account', url='createfaculty',
+                           card_title="Account Information", form=faculty_form, id=id)
+            return render(request, 'accounts/faculty_create_form_with_existing_user.html', context)
+
+
 def remove_faculty_group(request, id):
     if id > 0:
         try:
@@ -277,7 +369,8 @@ def createStudentWithExistingUser(request, id=0):
             return redirect('accounts:students_list')
 
         if Student.objects.filter(user=user).exists():
-            messages.error(request, 'Student With This Account Already Exist')
+            messages.info(request, 'Student With This Account Already Exist')
+            messages.info(request, 'user added in student group again')
             group = Group.objects.get(name='student')
             user.groups.add(group)
             messages.info(request, 'User is Added in Student Group')

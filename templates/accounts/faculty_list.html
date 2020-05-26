@@ -1,9 +1,15 @@
 {% extends "RTS/base.html" %}
 {% load static %}
 {% block css_block %}
-     <!-- DataTables -->
+    <!-- DataTables -->
     <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
-
+    <style>
+        .scrollable-menu {
+            height: auto;
+            max-height: 200px;
+            overflow-x: hidden;
+        }
+    </style>
 
 {% endblock %}
 {% block content_block %}
@@ -67,16 +73,35 @@
 
                         <td>
                             <div class="input-group-prepend">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <button type="button" data-boundary="viewport" class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
                                     Action
                                 </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{% url 'accounts:create_student_with_existing_user' faculty.user.id %}">
-                                        Add Student Role</a>
-                                    <a class="dropdown-item" href="{% url 'accounts:edit_faculty' faculty.id %}">Edit Faculty</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-menu scrollable-menu">
+                                    <a class="dropdown-item" href="{% url 'accounts:edit_faculty' faculty.id %}">Edit
+                                        Faculty</a>
+                                    <form method="post" action="{% url 'accounts:active_user' faculty.user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Active User</button>
+                                    </form>
+                                    <form method="post" action="{% url 'accounts:un_active_user' faculty.user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Un Active User</button>
+                                    </form>
+
+                                    <form method="post"
+                                          action="{% url 'accounts:remove_faculty_group' faculty.user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Remove Faculty Group</button>
+                                    </form>
+
+                                    <a class="dropdown-item" href="{% url 'accounts:edit_user' user.id %}">Edit User</a>
+
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Separated link</a>
+                                    <a class="dropdown-item"
+                                       href="{% url 'accounts:create_faculty_with_existing_user' faculty.user.id %}">Add
+                                        Faculty</a>
+
                                 </div>
                             </div>
                         </td>
@@ -84,7 +109,9 @@
                     </tr>
                 {% endfor %}
             {% else %}
-                  <tr><td colspan="9" class="text-info text-center"> No Record Found</td></tr>
+                <tr>
+                    <td colspan="9" class="text-info text-center"> No Record Found</td>
+                </tr>
             {% endif %}
 
             </tbody>

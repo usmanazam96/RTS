@@ -17,10 +17,13 @@ from django.contrib import admin
 from django.urls import path
 from faculty import views
 
-
 app_name = 'faculty'
 
 urlpatterns = [
     path("", views.home, name='faculty home'),
+    path("faculty_profile/", views.profile, name='profile'),
+    path("edit_profile/", views.edit_profile, name='edit profile'),
+    path("faculty_availabilty/", views.availability_status, name='availability_status'),
+    path("update_availabilty/", views.update_status, name='update_status'),
 
 ]

@@ -20,6 +20,8 @@ from administration import views
 app_name = 'administration'
 
 urlpatterns = [
-    path("", views.home, name='administration home'),
+    path("", views.home, name='home'),
+    path("admin_profile/", views.profile, name='profile'),
+    path("edit_profile/", views.edit_profile, name='edit profile'),
 
 ]

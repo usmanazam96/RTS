@@ -1,10 +1,161 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-Accounts
-</body>
-</html>
+{% extends 'RTS/base_top_navbar.html' %}
+{% block css_block %}
+    <style>.col-container {
+        display: table; /* Make the container element behave like a table */
+        width: 100%; /* Set full-width to expand the whole page */
+    }
+
+    .col {
+        display: table-cell; /* Make elements inside the container behave like table cells */
+    }
+    </style>
+{% endblock %}
+{% block content_block %}
+
+    <section class="content">
+        <div class="container-fluid">
+
+            <!-- Main row -->
+            <div class="card card-solid">
+                <div class="card-body pb-0">
+                    <div class="row ">
+                        {% for faculty in faculty_availability %}
+                        <div class="col-md-6 ">
+                            <div class="card bg-light">
+                                <div class="card-header text-muted border-bottom-0">
+                                    {{ faculty.faculty.position | title}}
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="row">
+                                        <div class="col-7">
+                                            <h2 class="lead"><b>{{ faculty.faculty.first_name | title}} {{ faculty.faculty.last_name | title}}</b></h2>
+                                            <p class="text-muted text-sm"><b>About: </b> {{ faculty.faculty.bio | title}} </p>
+                                            <ul class="ml-4 mb-0 fa-ul text-muted">
+                                                <li class="small"><span class="fa-li"><i
+                                                        class="fas fa-lg fa-building"></i></span>
+                                                   {{ faculty.faculty.room_location | title}}
+                                                </li>
+                                                <li class="small"><span class="fa-li"><i
+                                                        class="fas fa-lg fa-envelope"></i></span> {{ faculty.availabilityMsg }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-5 text-center">
+                                            <img src="/media/{{ faculty.faculty.profile_pic | default:"common/default_user.png" }}" alt="user pic"
+                                                 class="img-circle img-thumbnail {{ faculty.availability|yesno:"bg-success,bg-danger" }}"
+                                                 style="max-height:128px!important; max-width:128px!important">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="text-center">
+                                        <a onclick="subscribeFun(this)" class="btn btn-sm btn-danger"
+                                           style="color:white!important;">
+                                            <i class="fas fa-bell" style="color:white!important;"></i> Subscribe
+                                        </a>
+                                        <a class="btn btn-sm btn-info" data-toggle="modal" data-target="#modal-approve"
+                                           style="color:white!important;">
+                                            <i class="fas fa-users" style="color:white!important;"></i> Meeting
+                                        </a>
+                                        <a href="E:\FYP\Retource Tracking System\schedule-template-master\index.html"
+                                           class="btn btn-sm btn-primary">
+                                            <i class="fas fa-clock"></i> Schedule
+                                        </a>
+                                        <a href="messaging.html" class="btn btn-sm btn-success">
+                                            <i class="fas fa-comments"></i> Message
+                                        </a>
+                                        <a href="Profile.html" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-user"></i> Profile
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <nav aria-label="Contacts Page Navigation">
+                        <ul class="pagination justify-content-center m-0">
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">5</a></li>
+                            <li class="page-item"><a class="page-link" href="#">6</a></li>
+                            <li class="page-item"><a class="page-link" href="#">7</a></li>
+                            <li class="page-item"><a class="page-link" href="#">8</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- /.card-footer -->
+            </div>
+            <div class="modal fade" id="modal-approve">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Add Request</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="bootstrap-timepicker">
+                                <div class="form-group">
+                                    <label>Meeting Subject:</label><br>
+                                    <input type="text" placeholder="Meeting Subject" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Meeting Time:</label>
+
+                                    <div class="input-group date" id="timepicker" data-target-input="nearest">
+                                        <input type="text" id="timepicker"
+                                               class="form-control datetimepicker-input"
+                                               data-target="#timepicker"/>
+                                        <div class="input-group-append" data-target="#timepicker"
+                                             data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                        </div>
+                                    </div>
+                                    <!-- /.input group -->
+                                </div>
+                                <!-- /.form group -->
+                            </div>
+                            <div class="bootstrap-timepicker">
+                                <div class="form-group">
+                                    <label>Meeting Date:</label>
+
+                                    <div class="input-group date" id="datepicker" data-target-input="nearest">
+                                        <input type="text" id="timepicker"
+                                               class="form-control datetimepicker-input"
+                                               data-target="#datepicker"/>
+                                        <div class="input-group-append" data-target="#datepicker"
+                                             data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-calendar-alt"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /.input group -->
+                                </div>
+                                <!-- /.form group -->
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+            <!-- /.row (main row) -->
+        </div><!-- /.container-fluid -->
+    </section>
+{% endblock %}

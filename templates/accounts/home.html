@@ -5,7 +5,20 @@
             <div class="card-title">My CArd</div>
         </div>
         <div class="card-body">
+
            {{ request.user.admin.profile_pic }}
+            <br>
+            {{ groups }}
+            <br>
+            {{ allow }}
+            <br>
+            {{ common }}
+             <br>
+            {{ count}}
+            <br>
+            {{ role}}
+            <br>
+            session {{ request.session.login_role }}
         </div>
         <div class="card-footer">footer</div>
     </div>

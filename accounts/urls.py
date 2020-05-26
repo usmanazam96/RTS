@@ -22,6 +22,7 @@ app_name = 'accounts'
 urlpatterns = [
     path("", views.home, name='home'),
     path('login/', views.loginPage, name="login"),
+    path('login_role_select/', views.login_role_select, name="login_role_select"),
     path('logout/', views.logoutUser, name="logout"),
     path('create_faculty/', views.createFaculty, name="create_faculty"),
     path('create_student/', views.createStudent, name="create_student"),
@@ -30,10 +31,12 @@ urlpatterns = [
     path('students/', views.student_list_view, name="students_list"),
     path('admins/', views.admin_list_view, name="admins_list"),
     path('users/', views.user_list_view, name="users_list"),
+    path('active_users/', views.un_active_user_list_view, name="active_users_list"),
+    path('un_active_users/', views.active_user_list_view, name="un_active_users_list"),
     path('change_password/', views.change_password, name="change_password"),
     path('create_student_with_existing_user/<int:id>/', views.createStudentWithExistingUser,
          name="create_student_with_existing_user"),
-    path('create_admin_with_existing_user/<int:id>/', views.createAdmintWithExistingUser,
+    path('create_admin_with_existing_user/<int:id>/', views.createAdminWithExistingUser,
          name="create_admin_with_existing_user"),
     path('create_faculty_with_existing_user/<int:id>/', views.createFacultyWithExistingUser,
          name="create_faculty_with_existing_user"),
@@ -46,5 +49,7 @@ urlpatterns = [
     path('remove_admin_group/<int:id>/', views.remove_admin_group, name="remove_admin_group"),
     path('remove_faculty_group/<int:id>/', views.remove_faculty_group, name="remove_faculty_group"),
     path('remove_student_group/<int:id>/', views.remove_student_group, name="remove_student_group"),
+    path('faculty_profile/<int:id>/', views.faculty_profile, name="faculty_profile"),
+    path('faculty_profile_visitor/<int:id>/', views.faculty_profile_visitor, name="faculty_profile_visitor"),
 
 ]

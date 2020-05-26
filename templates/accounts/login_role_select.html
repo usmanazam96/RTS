@@ -22,7 +22,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="{% url 'index' %}"><b>Resource Tracking System</b></a>
+        <a href="index.html"><b>Resource Tracking System</b></a>
     </div>
     <!-- /.login-logo -->
     <div class="card">
@@ -40,33 +40,23 @@
                     {% endfor %}
                 {% endif %}
             </div>
-            <form action="{% url 'accounts:login' %}" method="post">
+            <form action="{% url 'accounts:login_role_select' %}" method="post">
                 {% csrf_token %}
                 <div class="input-group mb-3">
-                    <input type="text" name="username" class="form-control" placeholder="user name"
-                           required="required">
+                    <select class="form-control" name="role" required="">
+                        <option value=""> Select Role</option>
+                        {% for group in groups %}
+                            <option value="{{ group.id }}">{{ group.name | title }}</option>
+                        {% endfor %}
+                    </select>
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-user"></span>
                         </div>
                     </div>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Password" required="required">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
-                        </div>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col-8">
-                        <div class="icheck-primary">
-                            <input type="checkbox" id="remember">
-                            <label for="remember">
-                                Remember Me
-                            </label>
-                        </div>
                     </div>
                     <!-- /.col -->
                     <div class="col-4">
@@ -77,7 +67,7 @@
             </form>
 
             <p class="mb-1">
-                <a href="{% url 'reset_password' %} }">I forgot my password</a>
+                <a href="{% url 'accounts:logout' %} }">logout</a>
             </p>
 
         </div>

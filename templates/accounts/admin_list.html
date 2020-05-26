@@ -3,7 +3,13 @@
 {% block css_block %}
     <!-- DataTables -->
     <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
-
+    <style>
+        .scrollable-menu {
+            height: auto;
+            max-height: 100px;
+            overflow-x: hidden;
+        }
+    </style>
 
 {% endblock %}
 {% block content_block %}
@@ -64,16 +70,31 @@
 
                         <td>
                             <div class="input-group-prepend">
-                                <button type="button"  data-boundary="viewport" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <button type="button" data-boundary="viewport" class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
                                     Action
                                 </button>
-                                <div class="dropdown-menu-right">
+                                <div class="dropdown-menu dropdown-menu-right scrollable-menu">
                                     <a class="dropdown-item" href="{% url 'accounts:edit_admin' admin.id %}">Edit
                                         Admin</a>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <form method="post" action="{% url 'accounts:active_user' admin.user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Active User</button>
+                                    </form>
+                                    <form method="post" action="{% url 'accounts:un_active_user' admin.user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Un Active User</button>
+                                    </form>
+                                    <form method="post" action="{% url 'accounts:remove_admin_group' admin.user.id %}">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" type="submit">Remove Admin Group</button>
+                                    </form>
+                                    <a class="dropdown-item" href="{% url 'accounts:edit_user' admin.user.id %}">Edit User</a>
+
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Separated link</a>
+                                    <a class="dropdown-item" href="{% url 'accounts:create_admin_with_existing_user' user.id %}">Add Admin</a>
+
+
                                 </div>
                             </div>
                         </td>

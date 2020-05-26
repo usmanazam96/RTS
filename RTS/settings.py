@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # installed app
     'widget_tweaks',
     'django_cleanup',
+    'crispy_forms',
 
     # our app
     'accounts',
@@ -154,11 +155,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'uniqueuser456@gmail.com'
 EMAIL_HOST_PASSWORD = 'allok987'
 
-LOGIN_URL = '/accounts/login/'
-LOGIN_EXEMPT_URLS = (
-    r'^accounts/password/reset_password/$',
-    r'^accounts/password/reset_password_done/$',
-    r'^accounts/password/password_reset_confirm/<uidb64>/<token>/$',
-    r'^accounts/password/reset_password_complete/$',
-
-)
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

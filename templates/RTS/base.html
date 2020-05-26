@@ -4,16 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Resource Tracking System | {{ page_title }}</title>
+    <title>Resource Tracking System | {{ page_title |  title }}</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
-
-    <!-- iCheck -->
-    <link rel="stylesheet" href="{% static "plugins/icheck-bootstrap/icheck-bootstrap.min.css" %}">
-
-    <!-- overlayScrollbars -->
-    <link rel="stylesheet" href="{% static "plugins/overlayScrollbars/css/OverlayScrollbars.min.css" %}">
 
     <!-- summernote -->
     <link rel="stylesheet" href="{% static "plugins/summernote/summernote-bs4.css" %}">
@@ -22,7 +15,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
     <!-- Ionicons -->
-    <link rel="stylesheet" href=https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="{% static "dist/css/adminlte.min.css" %}">
 
@@ -146,63 +139,135 @@
                     <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
                 </div>
             </li>
-
-            <!-- Profile -->
-            <li class="nav-item dropdown">
-                <a class="nav-link" data-toggle="dropdown" href="#">
-                    <i class="far fas fa-user-circle fa-fw"></i>
-                    <span class="badge badge-primary navbar-badge"></span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            {% if request.user.is_authenticated %}
+                <!-- Profile -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="far fas fa-user-circle fa-fw"></i>
+                        <span class="badge badge-primary navbar-badge"></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <span class="dropdown-item dropdown-header">
-            <div>
-            <img src="dist/img/user2-160x160.jpg" class="img-circle mx-auto d-block img-thumbnail"
-                 style="max-height:100px; max-width: 100px " alt="User Image">
+            {% if request.session.login_role == 'admin' %}
+                <div>
+
+
+                <img src="/media/{{ request.user.admin.profile_pic| default:"common/default_user.png" }}"
+                     class="img-circle mx-auto d-block img-thumbnail"
+                     style="max-height:100px; max-width: 100px " alt="User Image">
 
            </div>
 
                 <p>
-                  Alexander Pierce - Web Developer
-                  <small>Member since Nov. 2012</small>
+                  {{ request.user.admin.first_name }} - {{ request.session.login_role | title }}<br>
+                  <small>Member since {{ request.user.date_joined | date:"d M Y" }}</small>
                 </p>
-          </span>
-                    <div class="dropdown-divider"></div>
-                    <!-- <a href="#" class="dropdown-item">
-                       <i class="fas fa-envelope mr-2"></i> 4 new messages
-                       <span class="float-right text-muted text-sm">3 mins</span>
-                     </a>
-                     <div class="dropdown-divider"></div>
-                     <a href="#" class="dropdown-item">
-                       <i class="fas fa-users mr-2"></i> 8 friend requests
-                       <span class="float-right text-muted text-sm">12 hours</span>
-                     </a>
-                     <div class="dropdown-divider"></div>
-                     <a href="#" class="dropdown-item">
-                       <i class="fas fa-file mr-2"></i> 3 new reports
-                       <span class="float-right text-muted text-sm">2 days</span>
-                     </a>
-                     <div class="dropdown-divider"></div>-->
-                    <div class="dropdown-item dropdown-footer">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <a href="Profile.html" class="btn btn-default btn-flat">Profile</a>
-                            </div>
-                            <div class="col-sm-6">
-                                <a href="‪E:\FYP\Retource Tracking System\localsdirectory\index.html"
-                                   class="btn btn-default btn-flat">Sign out</a>
-                            </div>
+                </span>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item dropdown-footer">
+                    <div class="row">
 
+                        {% if request.user.groups.count > 1 %}
+                            <div class="col-sm-5">
+                                <a href="{% url 'accounts:login_role_select' %}" class="btn btn-default btn-flat">Switch
+                                    Role</a>
+                            </div>
+                        {% endif %}
+                        <div class="col-sm-3">
+                            <a href="{% url 'administration:profile' %}" class="btn btn-default btn-flat">Profile</a>
                         </div>
+                        <div class="col-sm-3">
+                            <a href="{% url 'accounts:logout' %}"
+                               class="btn btn-default btn-flat">Sign out</a>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+            {% elif request.session.login_role == 'student' %}
+                <div>
+
+
+                    <img src="/media/{{ request.user.student.profile_pic | default:"common/default_user.png" }}"
+                         class="img-circle mx-auto d-block img-thumbnail"
+                         style="max-height:100px; max-width: 100px " alt="User Image">
+
+
+                </div>
+
+                <p>
+                    {{ request.user.student.first_name }} - {{ request.session.login_role | title }}<br>
+                    <small>Member since {{ request.user.date_joined | date:"d M Y" }}</small>
+                </p>
+                </span>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item dropdown-footer">
+                    <div class="row">
+
+                        {% if request.user.groups.count > 1 %}
+                            <div class="col-sm-5">
+                                <a href="{% url 'accounts:login_role_select' %}" class="btn btn-default btn-flat">Switch
+                                    Role</a>
+                            </div>
+                        {% endif %}
+                        <div class="col-sm-3">
+                            <a href="Profile.html" class="btn btn-default btn-flat">Profile</a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{% url 'accounts:logout' %}"
+                               class="btn btn-default btn-flat">Sign out</a>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+            {% elif request.session.login_role == 'faculty' %}
+                <div>
+
+                    <img src="/media/{{ request.user.faculty.profile_pic | default:"common/default_user.png" }}"
+                         class="img-circle mx-auto d-block img-thumbnail"
+                         style="max-height:100px; max-width: 100px " alt="User Image">
+
+
+                </div>
+
+                <p>
+                    {{ request.user.faculty.first_name }} - {{ request.session.login_role | title }}<br>
+                    <small>Member since {{ request.user.date_joined | date:"d M Y" }}</small>
+                </p>
+                </span>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-item dropdown-footer">
+                    <div class="row">
+
+                        {% if request.user.groups.count > 1 %}
+                            <div class="col-sm-5">
+                                <a href="{% url 'accounts:login_role_select' %}" class="btn btn-default btn-flat">Switch
+                                    Role</a>
+                            </div>
+                        {% endif %}
+                        <div class="col-sm-3">
+                            <a href="{% url 'faculty:profile' %}" class="btn btn-default btn-flat">Profile</a>
+                        </div>
+                        <div class="col-sm-3">
+                            <a href="{% url 'accounts:logout' %}"
+                               class="btn btn-default btn-flat">Sign out</a>
+                        </div>
+
+
                     </div>
                 </div>
-            </li>
+            {% endif %}
+
+                    </div>
+                </li>
+            {% endif %}
 
 
-            <li class="nav-item">
-                <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
-                    <i class="fas fa-th-large"></i>
-                </a>
-            </li>
         </ul>
     </nav>
     <!-- /.navbar -->
@@ -210,8 +275,8 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="#" class="brand-link">
-            <img src="{% static "Rts_logo.png" %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+        <a href="{% url 'index' %}" class="brand-link">
+            <img src="{% static "Rts_logo.png" %}" alt="RTS Logo" class="brand-image img-circle elevation-3"
                  style="opacity: .8">
             <span class="brand-text font-weight-lighter small">Resource Tracking System</span>
         </a>
@@ -219,14 +284,52 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- Sidebar user panel (optional) -->
+
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                <div class="image">
-                    <img src="{% static "dist/img/user2-160x160.jpg" %}" class="img-circle elevation-2"
-                         alt="User Image">
-                </div>
-                <div class="info">
-                    <a href="#" class="d-block">Alexander Pierce</a>
-                </div>
+                {% if request.session.login_role == 'student' %}
+
+                    <div class="image">
+                        <img src="/media/{{ request.user.student.profile_pic | default:"common/default_user.png" }}"
+                             class="img-circle elevation-2"
+                             alt="User Image">
+                    </div>
+
+
+                    <div class="info">
+                        <a href="#" class="d-block"> {{ request.user.student.first_name }}<br>
+                            <small class="float-right">{{ request.session.login_role| title }}</small></a>
+
+                    </div>
+
+                {% elif request.session.login_role == 'faculty' %}
+
+                    <div class="image">
+                        <img src="/media/{{ request.user.faculty.profile_pic | default:"common/default_user.png" }}"
+                             class="img-circle elevation-2"
+                             alt="User Image">
+                    </div>
+
+
+                    <div class="info">
+                        <a href="{% url 'faculty:profile' %}" class="d-block"> {{ request.user.faculty.first_name }}<br>
+                            <small class="float-right"> {{ request.session.login_role| title }}</small></a>
+
+                    </div>
+                {% elif request.session.login_role == 'admin' %}
+
+                    <div class="image">
+                        <img src="/media/{{ request.user.admin.profile_pic | default:"common/default_user.png" }}"
+                             class="img-circle elevation-2"
+                             alt="User Image">
+                    </div>
+
+                    <div class="info">
+                        <a href="{% url 'administration:profile' %}"
+                           class="d-block"> {{ request.user.admin.first_name }}<br>
+                            <small class="float-right">  {{ request.session.login_role| title }}</small></a>
+
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Sidebar Menu -->
@@ -235,108 +338,176 @@
                     data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
-                    <li class="nav-item has-treeview menu-open">
-                        <a href="index.html" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>
-                                Dashboard
-                            </p>
-                        </a>
+                    {% if request.session.login_role == 'admin' %}
+                        <li class="nav-item has-treeview menu-open">
+                            <a href="{% url 'administration:home' %}" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>
+                                    Dashboard
+                                </p>
+                            </a>
 
-                    </li>
-                    <li class="nav-header">Accounts</li>
-                     <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-copy"></i>
-                            <p>
-                                Users
-                                <i class="fas fa-angle-left right"></i>
+                        </li>
+                        <li class="nav-header">Accounts</li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    Users
+                                    <i class="fas fa-angle-left right"></i>
 
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'accounts:users_list' %}" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>All User</p>
-                                </a>
-                            </li>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:users_list' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All Users</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:active_users_list' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Active Users</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:un_active_users_list' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Un Active Users</p>
+                                    </a>
+                                </li>
 
-                        </ul>
-                    </li>
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-copy"></i>
-                            <p>
-                                Faculty
-                                <i class="fas fa-angle-left right"></i>
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    Faculty
+                                    <i class="fas fa-angle-left right"></i>
 
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'accounts:faculty_list' %}" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Faculty Record</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'accounts:create_faculty' %}" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Create Faculty Account</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-copy"></i>
-                            <p>
-                                Student
-                                <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:faculty_list' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Faculty Record</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:create_faculty' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Create Faculty Account</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    Student
+                                    <i class="fas fa-angle-left right"></i>
 
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'accounts:students_list' %}" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Students Record</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'accounts:create_student' %}" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Create Student Account</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-copy"></i>
-                            <p>
-                                Admins
-                                <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:students_list' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Students Record</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:create_student' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Create Student Account</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    Admins
+                                    <i class="fas fa-angle-left right"></i>
 
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{% url 'accounts:admins_list' %}" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Admins Record</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{% url 'accounts:create_admin' %}" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Create Admin Account</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                     <li class="nav-item has-treeview">
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:admins_list' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Admins Record</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:create_admin' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Create Admin Account</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    My Account
+                                    <i class="fas fa-angle-left right"></i>
+
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{% url 'administration:profile' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Profile</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'administration:edit profile' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Update Profile</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:change_password' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Change Password</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'accounts:logout' %}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Logout</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% elif request.session.login_role == 'faculty' %}
+                        <li class="nav-item has-treeview menu-open">
+                            <a href="{% url 'faculty:faculty home' %}" class="nav-link">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>
+                                    Dashboard
+                                </p>
+                            </a>
+
+                        </li>
+                        <li class="nav-header">Availability</li>
+                        <li class="nav-item has-treeview">
+                            <a href="{% url 'faculty:availability_status' %}" class="nav-link">
+                                <i class="nav-icon fas fa-eraser"></i>
+                                <p>
+                                    Availability Status
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-header">Accounts</li>
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-copy"></i>
                             <p>
@@ -346,6 +517,18 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'faculty:profile' %}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Profile</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'faculty:edit profile' %}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Update Profile</p>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="{% url 'accounts:change_password' %}" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
@@ -359,7 +542,8 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
+                    {% endif %}
+
 
                 </ul>
             </nav>
@@ -374,7 +558,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>{{ h1_title }}</h1>
+                        <h1>{{ h1_title  |  title }}</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -408,151 +592,7 @@
             <!-- /.row -->
         </section>
         <!-- /.content -->
-        <div class="modal fade" id="modal-approve">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Add Schedule</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="">
 
-                            <div class="form-group">
-                                <label>Minimal</label>
-                                <select class="form-control select2bs4" style="width: 100%;">
-                                    <option selected="selected" value="0">Select</option>
-                                    <option value="1">Monday</option>
-                                    <option value="2">Tuesday</option>
-                                    <option value="3">Wednesday</option>
-                                    <option value="4">Thursday</option>
-                                    <option value="5">Friday</option>
-
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <div class="bootstrap-timepicker">
-                                <div class="form-group">
-                                    <label>Start Time</label>
-
-                                    <div class="input-group date" id="timepicker" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input"
-                                               data-target="#timepicker"/>
-                                        <div class="input-group-append" data-target="#timepicker"
-                                             data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
-                                        </div>
-                                    </div>
-                                    <!-- /.input group -->
-                                </div>
-                                <!-- /.form group -->
-                            </div>
-
-                            <div class="bootstrap-timepicker">
-                                <div class="form-group">
-                                    <label>End Time</label>
-
-                                    <div class="input-group date" id="timepicker2" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input"
-                                               data-target="#timepicker2"/>
-                                        <div class="input-group-append" data-target="#timepicker2"
-                                             data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
-                                        </div>
-                                    </div>
-                                    <!-- /.input group -->
-                                </div>
-                                <!-- /.form group -->
-                            </div>
-
-
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                        </form>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
-
-        <div class="modal fade" style="show: false" id="modalUpdate">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Update Schedule</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="">
-
-                            <div class="form-group">
-                                <label>Minimal</label>
-                                <select id="day_u" class="form-control select2bs4" style="width: 100%;">
-                                    <option selected="selected" value="0">Select</option>
-                                    <option value="1">Monday</option>
-                                    <option value="2">Tuesday</option>
-                                    <option value="3">Wednesday</option>
-                                    <option value="4">Thursday</option>
-                                    <option value="5">Friday</option>
-
-                                </select>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <div class="bootstrap-timepicker">
-                                <div class="form-group">
-                                    <label>Start Time</label>
-
-                                    <div class="input-group date" id="timepicker" data-target-input="nearest">
-                                        <input type="text" id="starttime_up" class="form-control datetimepicker-input"
-                                               data-target="#timepicker"/>
-                                        <div class="input-group-append" data-target="#timepicker"
-                                             data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
-                                        </div>
-                                    </div>
-                                    <!-- /.input group -->
-                                </div>
-                                <!-- /.form group -->
-                            </div>
-
-                            <div class="bootstrap-timepicker">
-                                <div class="form-group">
-                                    <label>End Time</label>
-
-                                    <div class="input-group date" id="timepicker2" data-target-input="nearest">
-                                        <input type="text" id="endtime_up" class="form-control datetimepicker-input"
-                                               data-target="#timepicker2"/>
-                                        <div class="input-group-append" data-target="#timepicker2"
-                                             data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
-                                        </div>
-                                    </div>
-                                    <!-- /.input group -->
-                                </div>
-                                <!-- /.form group -->
-                            </div>
-
-
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                        </form>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
 
     </div>
     <!-- /.content-wrapper -->

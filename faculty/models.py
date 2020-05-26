@@ -4,7 +4,7 @@ from accounts.models import Faculty
 
 # Create your models here.
 class FacultyAvailability(models.Model):
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+    faculty = models.OneToOneField(Faculty, on_delete=models.CASCADE)
     availability = models.BooleanField(default=False)
     availabilityMsg = models.TextField(blank=True, default="N/A")
 

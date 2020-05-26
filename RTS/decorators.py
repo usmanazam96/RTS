@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 
 def unauthenticated_user(view_func):
@@ -18,12 +18,18 @@ def allowed_users(allowed_roles=[]):
 
             group = None
             if request.user.groups.exists():
-                group = request.user.groups.all()[0].name
+                group = list(request.user.groups.values_list('name', flat=True))
+                common_roles = list(set(group).intersection(allowed_roles))
+                role = request.session.get('login_role', 'None')
+                if role in common_roles:
+                    return view_func(request, *args, **kwargs)
+                else:
+                    if len(group) > 1:
+                        role_switch = True
 
-            if group in allowed_roles:
-                return view_func(request, *args, **kwargs)
-            else:
-                return HttpResponse('You are not authorized to view this page')
+                    context = dict(page_title='403 FORBIDDEN', h1_title='403 FORBIDDEN', url='403 FORBIDDEN',
+                                   role_switch=role_switch)
+                    return render(request, 'RTS/error_403.html', context)
 
         return wrapper_func
 

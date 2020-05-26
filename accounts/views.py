@@ -1,3 +1,5 @@
+from typing import Dict
+
 from django.contrib import messages
 import os
 from django.contrib.auth import authenticate, login, logout
@@ -5,12 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 
 from django.shortcuts import render, redirect
 
 # Create your views here.
-from RTS.decorators import unauthenticated_user
+from RTS.decorators import unauthenticated_user, allowed_users
 
 from faculty.models import *
 
@@ -18,7 +20,19 @@ from accounts.forms import *
 
 
 def home(request):
-    return render(request, 'accounts/home.html')
+    role = request.session.get('login_role', 'None')
+    if role == "admin":
+        return redirect('administration:home')
+    if role == "faculty":
+        return redirect('faculty:faculty home')
+
+    l = request.user.groups.values_list('name', flat=True)  # QuerySet Object
+    list1 = list(l)
+    count = request.user.groups.count()
+    list2 = ['student', 'faculty', 'admin']
+    list3 = list(set(list1).intersection(list2))
+    context = dict(groups=list1, allow=list2, common=list3, count=count, role=role)
+    return render(request, 'accounts/home.html', context)
 
 
 @unauthenticated_user
@@ -28,14 +42,60 @@ def loginPage(request):
         password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
-
         if user is not None:
-            login(request, user)
-            return redirect('accounts:home')
+            if user.is_active:
+                count = user.groups.count()
+                if count < 1:
+                    messages.info(request, f"{username} has not any group. kindly connect with admin")
+                else:
+                    login(request, user)
+                    if count > 1:
+                        return redirect('accounts:login_role_select')
+                    else:
+                        group = request.user.groups.all()[0].name
+                        request.session['login_role'] = group
+                        messages.success(request, f'login as {group} ')
+                        return redirect('accounts:home')
+            else:
+                messages.error(request, f'Account belong to  {username} '
+                                        f'is un active.kindly connect with admin')
         else:
-            messages.error(request, 'Invalid User or password')
+            try:
+                user = User.objects.get(username=username)
+                if user.is_active:
+                    messages.error(request, 'Wrong Password')
+                else:
+                    messages.error(request, f'Account belong to   {username} '
+                                            f'is un active.kindly connect with admin')
+
+            except User.DoesNotExist:
+                messages.error(request, f'Not Account belong to {username}')
+
     context = {'title': 'accounts | login'}
     return render(request, 'accounts/login.html', context)
+
+
+@login_required(login_url='accounts:login')
+def login_role_select(request):
+    if request.method == 'GET':
+        if request.user.groups.count() == 1:
+            return redirect('accounts:home')
+        groups = request.user.groups.all()
+        context = dict(title='accounts | login-role', groups=groups)
+        return render(request, 'accounts/login_role_select.html', context)
+
+    else:
+        group_id = request.POST.get('role')
+        try:
+            group = request.user.groups.get(pk=group_id)
+            request.session['login_role'] = group.name
+            messages.success(request, f'login as {group.name} ')
+            return redirect('accounts:home')
+        except Group.DoesNotExist:
+            messages.info(request, 'You are selecting wrong group')
+            groups = request.user.groups.all()
+            context = dict(title='accounts | login-role', groups=groups)
+            return render(request, 'accounts/login_role_select.html', context)
 
 
 def logoutUser(request):
@@ -44,7 +104,8 @@ def logoutUser(request):
 
 
 # admin
-
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def createAdmin(request):
     if request.method == "GET":
         user_form = UserForm()
@@ -78,6 +139,8 @@ def createAdmin(request):
             return render(request, 'accounts/admin_create_form.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def edit_admin(request, id=0):
     if id == 0:
         messages.error(request, 'Not admin found against this id')
@@ -110,6 +173,8 @@ def edit_admin(request, id=0):
             return render(request, 'accounts/admin_form.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def admin_list_view(request):
     admin_list = Admin.objects.all()
     context = dict(page_title='Accounts-Admins', h1_title='Admins', url='Admins',
@@ -117,6 +182,8 @@ def admin_list_view(request):
     return render(request, 'accounts/admin_list.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def createAdminWithExistingUser(request, id=0):
     if id == 0:
         messages.error(request, 'Not user found against this id')
@@ -163,6 +230,8 @@ def createAdminWithExistingUser(request, id=0):
             return render(request, 'accounts/admin_create_form_with_existing_user.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def remove_admin_group(request, id):
     if id > 0:
         try:
@@ -183,7 +252,8 @@ def remove_admin_group(request, id):
 
 # faculty
 
-
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def createFaculty(request):
     if request.method == "GET":
         user_form = UserForm()
@@ -219,6 +289,8 @@ def createFaculty(request):
             return render(request, 'accounts/faculty_create_form.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def faculty_list_view(request):
     faculty_list = Faculty.objects.all()
     context = dict(page_title='Accounts-Faculty', h1_title='Faculty', url='Faculty',
@@ -226,6 +298,8 @@ def faculty_list_view(request):
     return render(request, 'accounts/faculty_list.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def edit_faculty(request, id=0):
     if id == 0:
         messages.error(request, 'Not faculty found against this id')
@@ -258,6 +332,8 @@ def edit_faculty(request, id=0):
             return render(request, 'accounts/faculty_form.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def createFacultyWithExistingUser(request, id=0):
     if id == 0:
         messages.error(request, 'Not user found against this id')
@@ -304,6 +380,8 @@ def createFacultyWithExistingUser(request, id=0):
             return render(request, 'accounts/faculty_create_form_with_existing_user.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def remove_faculty_group(request, id):
     if id > 0:
         try:
@@ -322,8 +400,39 @@ def remove_faculty_group(request, id):
     return redirect('accounts:users_list')
 
 
-# student
+def faculty_profile(request, id=0):
+    if id <= 0:
+        messages.error(request, 'Not faculty found against this id')
+        return redirect('accounts:faculty_list')
+    else:
+        try:
+            faculty: Faculty = Faculty.objects.get(pk=id)
+        except Faculty.DoesNotExist:
+            messages.error(request, 'Faculty Not found against id or In-Valid id')
+            return redirect('accounts:faculty_list')
+        context = dict(page_title='Accounts-Faculty Profile', h1_title='Faculty Profile', url='faculty_profile',
+                       card_title="Account Information", faculty=faculty)
+    return render(request, 'accounts/faculty_profile.html', context)
 
+
+def faculty_profile_visitor(request, id=0):
+    if id <= 0:
+        messages.error(request, 'Not faculty found against this id')
+        return redirect('index')
+    else:
+        try:
+            faculty: Faculty = Faculty.objects.get(pk=id)
+        except Faculty.DoesNotExist:
+            messages.error(request, 'Faculty Not found against id or In-Valid id')
+            return redirect('index')
+        context = dict(page_title='Accounts-Faculty Profile', h1_title='Faculty Profile', url='faculty_profile',
+                       card_title="Account Information", faculty=faculty)
+    return render(request, 'accounts/faculty_profile_visitor.html', context)
+
+
+# student
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def createStudent(request):
     if request.method == "GET":
         user_form = UserForm()
@@ -357,6 +466,8 @@ def createStudent(request):
             return render(request, 'accounts/student_create_form.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def createStudentWithExistingUser(request, id=0):
     if id == 0:
         messages.error(request, 'Not user found against this id')
@@ -403,6 +514,8 @@ def createStudentWithExistingUser(request, id=0):
             return render(request, 'accounts/student_create_form_with_existing_user.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def edit_student(request, id=0):
     if id == 0:
         messages.error(request, 'Not student found against this id')
@@ -435,6 +548,8 @@ def edit_student(request, id=0):
             return render(request, 'accounts/student_form.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def student_list_view(request):
     student_list = Student.objects.all()
     context = dict(page_title='Accounts-Students', h1_title='Students', url='Students',
@@ -442,6 +557,8 @@ def student_list_view(request):
     return render(request, 'accounts/student_list.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def remove_student_group(request, id):
     if id > 0:
         try:
@@ -461,7 +578,8 @@ def remove_student_group(request, id):
 
 
 # User
-
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def user_list_view(request):
     user_list = User.objects.all()
     context = dict(page_title='Accounts-Users', h1_title='All Users', url='users',
@@ -469,6 +587,26 @@ def user_list_view(request):
     return render(request, 'accounts/user_list.html', context)
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
+def active_user_list_view(request):
+    user_list = User.objects.filter(is_active=True)
+    context = dict(page_title='Accounts-Users', h1_title='All Users', url='users',
+                   card_title="All Users", user_list=user_list)
+    return render(request, 'accounts/user_list.html', context)
+
+
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
+def un_active_user_list_view(request):
+    user_list = User.objects.filter(is_active=False)
+    context = dict(page_title='Accounts-Users', h1_title='All Users', url='users',
+                   card_title="All Users", user_list=user_list)
+    return render(request, 'accounts/user_list.html', context)
+
+
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def un_active_user(request, id=0):
     if id > 0:
         try:
@@ -487,6 +625,8 @@ def un_active_user(request, id=0):
     return redirect('accounts:users_list')
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def active_user(request, id=0):
     if id > 0:
         try:
@@ -506,6 +646,8 @@ def active_user(request, id=0):
     return redirect('accounts:users_list')
 
 
+@login_required(login_url='accounts:login')
+@allowed_users(allowed_roles=['admin'])
 def edit_user(request, id=0):
     if id == 0:
         messages.error(request, 'Not user found against this id')

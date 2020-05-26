@@ -1,10 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-administration
-</body>
-</html>
+{% extends 'RTS/base.html' %}
+{% block content_block %}
+     <div class="row">
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3>{{ user_count }}</h3>
+
+                <p>User Registered</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <a href="{% url 'accounts:users_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-alt-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{ active_user }}</h3>
+
+                <p>Active User</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-user-check"></i>
+              </div>
+              <a href="{% url 'accounts:active_users_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{ un_active_user }}</h3>
+
+                <p>Un Active User</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-user-lock"></i>
+              </div>
+              <a href="{% url 'accounts:un_active_users_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+              <!-- ./col -->
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3>{{ admin_count }}</h3>
+
+                <p>Admins</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-user-plus"></i>
+              </div>
+              <a href="{% url 'accounts:admins_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <!-- ./col -->
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{ faculty_count }}</h3>
+
+                <p>Faculty</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-users-cog"></i>
+              </div>
+              <a href="{% url 'accounts:faculty_list' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <!-- ./col -->
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{ student_count }}</h3>
+
+                <p>Student</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-user-graduate"></i>
+              </div>
+              <a href="{% url 'accounts:students_list' %} " class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+
+
+        </div>
+{% endblock %}

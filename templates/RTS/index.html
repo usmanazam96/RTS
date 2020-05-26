@@ -1,4 +1,4 @@
-{% extends 'RTS/base.html' %}
+{% extends 'RTS/base_top_navbar.html' %}
 {% block css_block %}
     <style>.col-container {
         display: table; /* Make the container element behave like a table */
@@ -75,7 +75,7 @@
                                                     <i class="fas fa-clock"></i> Schedule
                                                 </a>
                                             {% endif %}
-                                            <a href="{% url 'accounts:faculty_profile' faculty.faculty.id %}"
+                                            <a href="{% url 'accounts:faculty_profile_visitor' faculty.faculty.id %}"
                                                class="btn btn-sm btn-primary">
                                                 <i class="fas fa-user"></i> Profile
                                             </a>

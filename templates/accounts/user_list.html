@@ -3,7 +3,13 @@
 {% block css_block %}
     <!-- DataTables -->
     <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
-
+    <style>
+    .scrollable-menu {
+    height: auto;
+    max-height: 100px;
+    overflow-x: hidden;
+}
+    </style>
 
 {% endblock %}
 {% block content_block %}
@@ -48,10 +54,10 @@
 
                         <td>
                             <div class="input-group-prepend">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <button type="button" data-boundary="viewport" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                     Action
                                 </button>
-                                <div class="dropdown-menu">
+                                <div class="dropdown-menu scrollable-menu">
                                     <form method="post" action="{% url 'accounts:active_user' user.id %}">
                                         {% csrf_token %}
                                         <button class="dropdown-item" type="submit">Active User</button>
@@ -75,7 +81,9 @@
                                     <a class="dropdown-item" href="{% url 'accounts:edit_user' user.id %}">Edit User</a>
 
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Separated link</a>
+                                    <a class="dropdown-item" href="{% url 'accounts:create_admin_with_existing_user' user.id %}">Add Admin</a>
+                                    <a class="dropdown-item" href="{% url 'accounts:create_faculty_with_existing_user' user.id %}">Add Facculty</a>
+                                    <a class="dropdown-item" href="{% url 'accounts:create_student_with_existing_user' user.id %}">Add Student</a>
                                 </div>
                             </div>
                         </td>

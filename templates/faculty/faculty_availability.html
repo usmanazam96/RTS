@@ -1,0 +1,119 @@
+{% extends 'RTS/base.html' %}
+{% block content_block %}
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-sm-3">
+
+            </div>
+            <div class="col-sm-6">
+
+                <!-- small box -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Availability Status</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                    <div class="card-body">
+                        {% load widget_tweaks %}
+                        {% csrf_token %}
+                        <table class="table">
+                            <tr>
+                                <th>Current Status</th>
+                                <td>{{ availability.availability|yesno:"Online,Offline" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Status Message</th>
+                                <td>{{ availability.availabilityMsg | default:"N/A" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#modal-approve">
+                            Update Status
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-sm-3">
+
+            </div>
+        </div>
+
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+    <div class="modal fade" id="modal-approve">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Update Availability Status</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url "faculty:update_status" %}" method="post">
+                        <div class="form-group">
+                            <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                            {% csrf_token %}
+                                {% if form.is_bound %}
+                                    {% if form.availability.errors %}
+                                        {% render_field form.availability class="form-control-input col-6" %}
+                                        {% for error in form.availability.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% render_field form.availability class="form-control col-6 is-valid" %}
+                                    {% endif %}
+                                {% else %}
+                                    {% render_field form.availability class="form-input col-6" %}
+                                {% endif %}
+                                <label class="form-control-label" for="">Online Status</label>
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <label>Availability Message</label>
+
+                                {% if form.is_bound %}
+                                    {% if form.form.availabilityMsg.errors %}
+                                        {% render_field availabilityMsg class="form-control" %}
+                                        {% for error in form.availabilityMsg.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% render_field form.availabilityMsg class="form-control" %}
+                                    {% endif %}
+                                {% else %}
+                                    {% render_field form.availabilityMsg class="form-control" %}
+                                {% endif %}
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+
+                        </div>
+                    </form>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </div>
+{% endblock %}
+{% block script_block %}
+    <script>$("[name='availability']").bootstrapSwitch();</script>
+{% endblock %}

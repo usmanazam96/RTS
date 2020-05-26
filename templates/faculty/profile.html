@@ -1,0 +1,95 @@
+{% extends 'RTS/base.html' %}
+{% block content_block %}
+    <div class="row">
+        <div class="col-sm-1">
+
+        </div>
+        <div class="col-sm-3">
+            <div class="card card-primary card-outline">
+                <div class="card-body box-profile">
+                    <div class="text-center">
+                        <img class="profile-user-img img-fluid img-circle img-thumbnail {{ faculty.facultyavailability.availability |yesno:"bg-success,bg-danger" }}"
+                             src="/media/{{ faculty.profile_pic| default:"common/default_user.png" }}"
+                             alt="User profile picture">
+                    </div>
+
+                    <h3 class="profile-username text-center">{{ faculty.first_name | title }}</h3>
+
+                    <p class="text-muted text-center"> {{ faculty.position | title }}</p>
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <div class="card card-primary card-outline">
+                <div class="card-header bg-primary">
+                    <div class="card-title  text-center">Availability</div>
+                </div>
+                <div class="card-body box-profile">
+                    <strong><i class="fas fa-user-check"></i> Available  </strong>
+
+                    <p class="text-muted">
+                        {{ faculty.facultyavailability.availability|yesno:"Available,Not Avaialble" }}
+                    </p>
+
+                    <hr>
+
+                   <strong><i class="fas fa-envelope-open-text"></i> Message </strong>
+
+                    <p class="text-muted">
+                        {{ faculty.facultyavailability.availabilityMsg| default:"N/A" }}
+                    </p>
+
+                    <hr>
+
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <div class="col-sm-7">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">About Me</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <strong><i class="fas fa-user"></i> Name </strong>
+
+                    <p class="text-muted">
+                        {{ faculty.first_name | title }} {{ faculty.last_name | title }}
+                    </p>
+
+                    <hr>
+                    <strong><i class="fas fa-envelope"></i> Email</strong>
+
+                    <p class="text-muted">
+                        {{ faculty.user.email|default:"N/A" }}
+                    </p>
+
+                    <hr>
+                    <strong><i class="fas fa-info-circle"></i> About</strong>
+
+                    <p class="text-muted">
+                        {{ faculty.bio|default:"N/A" }}
+                    </p>
+
+                    <hr>
+                    <strong><i class="fas fa-building"></i> Location</strong>
+
+                    <p class="text-muted">
+                        {{ faculty.room_location }}
+                    </p>
+
+                    <hr>
+
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+
+    </div>
+{% endblock %}

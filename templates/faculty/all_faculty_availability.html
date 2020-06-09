@@ -93,7 +93,36 @@
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                    {% if faculty_availability.has_other_pages %}
+                    {% if faculty_availability.has_other_pages and query %}
+                        <nav aria-label="Contacts Page Navigation">
+                            <ul class="pagination justify-content-center m-0">
+                                {% if faculty_availability.has_previous %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ faculty_availability.previous_page_number }}&query={{ query }}">&laquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link">&laquo;</a></li>
+                                {% endif %}
+                                {% for i in faculty_availability.paginator.page_range %}
+                                    {% if faculty_availability.number == i %}
+                                        <li class="page-item active"><a
+                                                class="page-link disabled">{{ i }}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?page={{ i }}&query={{ query }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if faculty_availability.has_next %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ faculty_availability.next_page_number }}&query={{ query }}">&raquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link">&raquo;</a></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% elif faculty_availability.has_other_pages %}
                         <nav aria-label="Contacts Page Navigation">
                             <ul class="pagination justify-content-center m-0">
                                 {% if faculty_availability.has_previous %}
@@ -101,12 +130,12 @@
                                                              href="?page={{ faculty_availability.previous_page_number }}">&laquo;</a>
                                     </li>
                                 {% else %}
-                                    <li class="page-item disabled"><a  class="page-link">&laquo;</a></li>
+                                    <li class="page-item disabled"><a class="page-link">&laquo;</a></li>
                                 {% endif %}
                                 {% for i in faculty_availability.paginator.page_range %}
                                     {% if faculty_availability.number == i %}
                                         <li class="page-item active"><a
-                                                 class="page-link disabled">{{ i }}</a>
+                                                class="page-link disabled">{{ i }}</a>
                                         </li>
                                     {% else %}
                                         <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
@@ -117,7 +146,7 @@
                                                              href="?page={{ faculty_availability.next_page_number }}">&raquo;</a>
                                     </li>
                                 {% else %}
-                                     <li class="page-item disabled"><a  class="page-link">&raquo;</a></li>
+                                    <li class="page-item disabled"><a class="page-link">&raquo;</a></li>
                                 {% endif %}
                             </ul>
                         </nav>

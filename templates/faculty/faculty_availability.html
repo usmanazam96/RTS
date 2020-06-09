@@ -62,7 +62,7 @@
                     <form action="{% url "faculty:update_status" %}" method="post">
                         <div class="form-group">
                             <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                            {% csrf_token %}
+                                {% csrf_token %}
                                 {% if form.is_bound %}
                                     {% if form.availability.errors %}
                                         {% render_field form.availability class="form-control-input col-6" %}

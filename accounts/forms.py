@@ -1,5 +1,6 @@
 from django import forms
 from accounts.models import *
+from accounts.queries import *
 
 
 class UserForm(forms.ModelForm):
@@ -8,6 +9,18 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'password')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data["email"]
+        if self.instance.pk is None:  # insert
+            if is_email_already_exist(email):
+                self.add_error('email', 'email already exist')
+        else:
+            if is_email_already_exist(email, self.instance.pk):
+                self.add_error('email', 'email already exist')
+
+        return cleaned_data
 
 
 class FacultyForm(forms.ModelForm):

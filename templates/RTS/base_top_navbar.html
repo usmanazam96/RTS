@@ -69,13 +69,25 @@
                             <a href="{% url 'accounts:login' %}" class="nav-link">Login</a>
                         </li>
                     {% endif %}
+                    <li class="nav-item dropdown">
+                        <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false" class="nav-link dropdown-toggle">Faculty Availability</a>
+                        <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
+                             <li><a href="{% url 'faculty:all_available_faculty' %}" class="dropdown-item">All </a></li>
+                            <li><a href="{% url 'faculty:available_faculty' %}" class="dropdown-item">Available </a></li>
+                            <li><a href="{% url 'faculty:not_available_faculty' %}" class="dropdown-item">Not Available</a></li>
+
+
+                        </ul>
+                    </li>
 
                 </ul>
 
+
                 <!-- SEARCH FORM -->
-                <form class="form-inline ml-0 ml-md-3">
+                <form class="form-inline ml-0 ml-md-3" method="get" action="{% url 'faculty:search_availability_faculty' %}">
                     <div class="input-group input-group-sm">
-                        <input class="form-control form-control-navbar" type="search" placeholder="Search"
+                        <input name="query" class="form-control  form-control-navbar" type="search" placeholder="Search Faculty"
                                aria-label="Search">
                         <div class="input-group-append">
                             <button class="btn btn-navbar" type="submit">

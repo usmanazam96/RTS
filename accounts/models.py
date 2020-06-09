@@ -29,7 +29,7 @@ class Faculty(models.Model):
         ('F', 'Female'),
         ('O', 'Other'),
     )
-    first_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50, )
     last_name = models.CharField(max_length=50)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField()

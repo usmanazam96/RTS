@@ -1,0 +1,266 @@
+{% extends "RTS/base.html" %}
+{% load static %}
+{% block css_block %}
+
+    <link rel="stylesheet" href="{% static "plugins/select2/css/select2.min.css" %}">
+    <link rel="stylesheet" href="{% static "plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" %}">
+    <link rel="stylesheet" href="{% static "plugins/daterangepicker/daterangepicker.css" %}">
+
+{% endblock %}
+{% block content_block %}
+
+    <!-- Main content -->
+
+    <div class="row">
+        <div class="col-md-2">
+
+        </div>
+        <div class="col-md-8">
+
+            <!-- small box -->
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Visting Hours</h3>
+                </div>
+                <!-- /.card-header -->
+
+                <div class="card-body">
+                    <table class="table" id="mytable">
+                        <thead>
+                        <th>Day</th>
+                        <th>Timing</th>
+                        <th>Type</th>
+                        <th>Options</th>
+                        </thead>
+                        {% if schedule_list %}
+                            {% for schedule in schedule_list %}
+                                <tr>
+                                    <td>{{ schedule.get_day_display }}</td>
+                                    <td>{{ schedule.start_time|time:'h:i A' }}
+                                        - {{ schedule.end_time|time:'h:i A' }}</td>
+                                    <td>{{ schedule.schedule_type }}</td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <a href="{% url 'faculty:update_schedule' schedule.id %}" type="button"
+                                                   class="btn btn-block btn-outline-warning"
+                                                >Update
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <form method="post" onsubmit="confirm('Do you really want to delete the schedule?')" action="{% url 'faculty:remove_schedule' schedule.id %}">
+                                                    {% csrf_token %}
+                                                    <button  type="submit"
+                                                            class="btn btn-block btn-outline-danger">Remove
+                                                    </button>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="bg-info text-center text-muted"> No Record Found</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#modal_create">Add
+                        Visiting Hours
+                    </button>
+                    <button onclick="" class="btn btn-primary" style="float:right!important;">
+
+                        View Complete Schedule
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="col-md-2">
+
+        </div>
+    </div>
+
+    <!-- /.row -->
+
+    <!-- /.content -->
+    <div class="modal fade" id="modal_create">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Schedule</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="{% url 'faculty:create_schedule' %}">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                                             role="alert">
+                                            {{ message }}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% load widget_tweaks %}
+                        {% csrf_token %}
+
+                        {% for hidden_field in form.hidden_fields %}
+                            {{ hidden_field }}
+                        {% endfor %}
+                        <div class="row">
+
+                            <!---  day -->
+
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    {{ form.day.label_tag }}
+
+                                    {% if form.is_bound %}
+                                        {% if form.day.errors %}
+                                            {% render_field form.day class="form-control is-invalid" %}
+                                            {% for error in form.day.errors %}
+                                                <div class="invalid-feedback">
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% render_field form.day class="form-control is-valid" %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% render_field form.day class="form-control" %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!---  Type -->
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    {{ form.schedule_type.label_tag }}
+
+                                    {% if form.is_bound %}
+                                        {% if form.schedule_type.errors %}
+                                            {% render_field form.schedule_type class="form-control is-invalid" %}
+                                            {% for error in form.schedule_type.errors %}
+                                                <div class="invalid-feedback">
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% render_field form.schedule_type class="form-control is-valid" %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% render_field form.schedule_type class="form-control" %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!---  start time-->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    {{ form.start_time.label_tag }}
+                                    <div class="input-group date" id="timepicker1" data-target-input="nearest">
+                                        {% if form.is_bound %}
+                                            {% if form.start_time.errors %}
+                                                {% render_field form.start_time class="form-control is-invalid datetimepicker-input" data-target="#timepicker1" %}
+
+                                            {% else %}
+                                                {% render_field form.start_time class="form-control is-valid datetimepicker-input" data-target="#timepicker1" %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% render_field form.start_time class="form-control datetimepicker-input" data-target="#timepicker1" %}
+                                        {% endif %}
+                                        <div class="input-group-append" data-target="#timepicker1"
+                                             data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                        </div>
+                                        {% for error in form.start_time.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!---  end time-->
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    {{ form.end_time.label_tag }}
+                                    <div class="input-group date" id="timepicker" data-target-input="nearest">
+                                        {% if form.is_bound %}
+                                            {% if form.end_time.errors %}
+                                                {% render_field form.end_time class="form-control is-invalid datetimepicker-input" data-target="#timepicker" %}
+
+                                            {% else %}
+                                                {% render_field form.end_time class="form-control is-valid datetimepicker-input" data-target="#timepicker" %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% render_field form.end_time class="form-control datetimepicker-input" data-target="#timepicker" %}
+                                        {% endif %}
+                                        <div class="input-group-append" data-target="#timepicker"
+                                             data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                        </div>
+                                        {% for error in form.end_time.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+{% endblock %}
+
+{% block script_block %}
+    <script>$('#id_day,#id_schedule_type').select2({
+        theme: 'bootstrap4'
+    })
+
+    $('#timepicker,#timepicker1').datetimepicker({
+        format: 'HH:mm',
+        pickDate: false,
+        pickSeconds: false,
+        pick12HourFormat: false
+    })
+    </script>
+    {% if form.is_bound %}
+        <script>
+            $('#modal_create').modal('show');
+        </script>
+    {% endif %}
+{% endblock %}

@@ -21,9 +21,17 @@ app_name = 'faculty'
 
 urlpatterns = [
     path("", views.home, name='faculty home'),
+    path('all_available_faculty', views.all_available_faculty, name='all_available_faculty'),
+    path('available_faculty', views.available_status_on_faculty, name='available_faculty'),
+    path('not_avaialable_faculty', views.available_status_off_faculty, name='not_available_faculty'),
+    path('search_availability_faculty', views.search_availability_faculty, name='search_availability_faculty'),
     path("faculty_profile/", views.profile, name='profile'),
     path("edit_profile/", views.edit_profile, name='edit profile'),
     path("faculty_availabilty/", views.availability_status, name='availability_status'),
     path("update_availabilty/", views.update_status, name='update_status'),
+    path("schedule/", views.schedule_view, name='schedule_view'),
+    path("create_schedule/", views.schedule_create, name='create_schedule'),
+    path("update_schedule/<int:id>/", views.schedule_update, name='update_schedule'),
+    path("remove_schedule/<int:id>/", views.schedule_remove, name='remove_schedule'),
 
 ]

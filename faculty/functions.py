@@ -7,3 +7,7 @@ def get_time_diff(end_time, start_time):
     if delta.days < 0:
         delta_minutes *= -1
     return delta_minutes
+
+
+def get_today():
+    return datetime.today().weekday() + 1;

@@ -8,9 +8,12 @@
 {% endblock %}
 {% block content_block %}
 
+
     <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule">
         <div class="cd-schedule__timeline">
             <ul>
+                <li><span>08:00</span></li>
+                <li><span>08:30</span></li>
                 <li><span>09:00</span></li>
                 <li><span>09:30</span></li>
                 <li><span>10:00</span></li>
@@ -30,165 +33,128 @@
                 <li><span>17:00</span></li>
                 <li><span>17:30</span></li>
                 <li><span>18:00</span></li>
+                <li><span>18:30</span></li>
+                <li><span>19:00</span></li>
+                <li><span>19:30</span></li>
+                <li><span>20:00</span></li>
             </ul>
         </div> <!-- .cd-schedule__timeline -->
 
         <div class="cd-schedule__events">
             <ul>
+
                 <li class="cd-schedule__group">
                     <div class="cd-schedule__top-info"><span>Monday</span></div>
 
                     <ul>
-                        <li class="cd-schedule__event">
-                            <a data-start="09:30" data-end="10:30" data-event="event-1" href="#0">
-                                <em class="cd-schedule__name">DSA Lecture</em>
-                            </a>
-                        </li>
-
-                        <li class="cd-schedule__event">
-                            <a data-start="11:00" data-end="12:30" data-content="event-rowing-workout"
-                               data-event="event-2" href="#0">
-                                <em class="cd-schedule__name">OOP Lecture</em>
-                            </a>
-                        </li>
-
-                        <li class="cd-schedule__event">
-                            <a data-start="14:00" data-end="15:15" data-content="event-yoga-1" data-event="event-3"
-                               href="#0">
-                                <em class="cd-schedule__name">Meeting</em>
-                            </a>
-                        </li>
+                        {% for schedule in schedule_list_monday %}
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </li>
-
                 <li class="cd-schedule__group">
                     <div class="cd-schedule__top-info"><span>Tuesday</span></div>
-
                     <ul>
-                        <li class="cd-schedule__event">
-                            <a data-start="10:00" data-end="11:00" data-content="event-rowing-workout"
-                               data-event="event-2" href="#0">
-                                <em class="cd-schedule__name">Break</em>
-                            </a>
-                        </li>
+                        {% for schedule in schedule_list_tuesday %}
 
-                        <li class="cd-schedule__event">
-                            <a data-start="11:30" data-end="13:00" data-content="event-restorative-yoga"
-                               data-event="event-4" href="#0">
-                                <em class="cd-schedule__name">DSA Lecture</em>
-                            </a>
-                        </li>
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
 
-                        <li class="cd-schedule__event">
-                            <a data-start="13:30" data-end="15:00" data-content="event-abs-circuit" data-event="event-1"
-                               href="#0">
-                                <em class="cd-schedule__name">Meeting</em>
-                            </a>
-                        </li>
-
-                        <li class="cd-schedule__event">
-                            <a data-start="15:45" data-end="16:45" data-content="event-yoga-1" data-event="event-3"
-                               href="#0">
-                                <em class="cd-schedule__name">Meeting</em>
-                            </a>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </li>
-
                 <li class="cd-schedule__group">
                     <div class="cd-schedule__top-info"><span>Wednesday</span></div>
-
                     <ul>
-                        <li class="cd-schedule__event">
-                            <a data-start="09:00" data-end="10:15" data-content="event-restorative-yoga"
-                               data-event="event-4" href="#0">
-                                <em class="cd-schedule__name">Meeting</em>
-                            </a>
-                        </li>
+                        {% for schedule in schedule_list_wednesday %}
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
 
-                        <li class="cd-schedule__event">
-                            <a data-start="10:45" data-end="11:45" data-content="event-yoga-1" data-event="event-3"
-                               href="#0">
-                                <em class="cd-schedule__name">Free</em>
-                            </a>
-                        </li>
-
-                        <li class="cd-schedule__event">
-                            <a data-start="12:00" data-end="13:45" data-content="event-rowing-workout"
-                               data-event="event-2" href="#0">
-                                <em class="cd-schedule__name">Free</em>
-                            </a>
-                        </li>
-
-                        <li class="cd-schedule__event">
-                            <a data-start="13:45" data-end="15:00" data-content="event-yoga-1" data-event="event-3"
-                               href="#0">
-                                <em class="cd-schedule__name">DSA Lecture</em>
-                            </a>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </li>
-
                 <li class="cd-schedule__group">
                     <div class="cd-schedule__top-info"><span>Thursday</span></div>
-
                     <ul>
-                        <li class="cd-schedule__event">
-                            <a data-start="09:30" data-end="10:30" data-content="event-abs-circuit" data-event="event-1"
-                               href="#0">
-                                <em class="cd-schedule__name">OOP Lecture</em>
-                            </a>
-                        </li>
+                        {% for schedule in schedule_list_thursday %}
 
-                        <li class="cd-schedule__event">
-                            <a data-start="12:00" data-end="13:45" data-content="event-restorative-yoga"
-                               data-event="event-4" href="#0">
-                                <em class="cd-schedule__name">DSA Lab</em>
-                            </a>
-                        </li>
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
 
-                        <li class="cd-schedule__event">
-                            <a data-start="15:30" data-end="16:30" data-content="event-abs-circuit" data-event="event-1"
-                               href="#0">
-                                <em class="cd-schedule__name">Free</em>
-                            </a>
-                        </li>
-
-                        <li class="cd-schedule__event">
-                            <a data-start="17:00" data-end="18:30" data-content="event-rowing-workout"
-                               data-event="event-2" href="#0">
-                                <em class="cd-schedule__name">Free</em>
-                            </a>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </li>
-
                 <li class="cd-schedule__group">
                     <div class="cd-schedule__top-info"><span>Friday</span></div>
-
                     <ul>
-                        <li class="cd-schedule__event">
-                            <a data-start="10:00" data-end="11:00" data-content="event-rowing-workout"
-                               data-event="event-2" href="#0">
-                                <em class="cd-schedule__name">OOP Lab</em>
-                            </a>
-                        </li>
+                        {% for schedule in schedule_list_friday %}
 
-                        <li class="cd-schedule__event">
-                            <a data-start="12:30" data-end="14:00" data-content="event-abs-circuit" data-event="event-1"
-                               href="#0">
-                                <em class="cd-schedule__name">OOP Lab</em>
-                            </a>
-                        </li>
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
 
-                        <li class="cd-schedule__event">
-                            <a data-start="15:45" data-end="16:45" data-content="event-yoga-1" data-event="event-3"
-                               href="#0">
-                                <em class="cd-schedule__name">Off</em>
-                            </a>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </li>
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Saturday</span></div>
+                    <ul>
+                        {% for schedule in schedule_list_saturday %}
+
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Sunday</span></div>
+                    <ul>
+                        {% for schedule in schedule_list_sunday %}
+
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </li>
+
+
             </ul>
         </div>
 

@@ -1,10 +1,190 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "RTS/base_top_navbar.html" %}
+{% load static %}
+{% block css_block %}
+
+    <script>document.getElementsByTagName("html")[0].className += " js";</script>
+    <link rel="stylesheet" href="{% static "schedule/assets/css/style.css" %}">
+
+{% endblock %}
+{% block content_block %}
+
+
+    <div class="cd-schedule cd-schedule--loading margin-top-lg margin-bottom-lg js-cd-schedule">
+        <div class="cd-schedule__timeline">
+            <ul>
+                <li><span>08:00</span></li>
+                <li><span>08:30</span></li>
+                <li><span>09:00</span></li>
+                <li><span>09:30</span></li>
+                <li><span>10:00</span></li>
+                <li><span>10:30</span></li>
+                <li><span>11:00</span></li>
+                <li><span>11:30</span></li>
+                <li><span>12:00</span></li>
+                <li><span>12:30</span></li>
+                <li><span>13:00</span></li>
+                <li><span>13:30</span></li>
+                <li><span>14:00</span></li>
+                <li><span>14:30</span></li>
+                <li><span>15:00</span></li>
+                <li><span>15:30</span></li>
+                <li><span>16:00</span></li>
+                <li><span>16:30</span></li>
+                <li><span>17:00</span></li>
+                <li><span>17:30</span></li>
+                <li><span>18:00</span></li>
+                <li><span>18:30</span></li>
+                <li><span>19:00</span></li>
+                <li><span>19:30</span></li>
+                <li><span>20:00</span></li>
+            </ul>
+        </div> <!-- .cd-schedule__timeline -->
+
+        <div class="cd-schedule__events">
+            <ul>
+
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Monday</span></div>
+
+                    <ul>
+                        {% for schedule in schedule_list_monday %}
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Tuesday</span></div>
+                    <ul>
+                        {% for schedule in schedule_list_tuesday %}
+
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Wednesday</span></div>
+                    <ul>
+                        {% for schedule in schedule_list_wednesday %}
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Thursday</span></div>
+                    <ul>
+                        {% for schedule in schedule_list_thursday %}
+
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Friday</span></div>
+                    <ul>
+                        {% for schedule in schedule_list_friday %}
+
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Saturday</span></div>
+                    <ul>
+                        {% for schedule in schedule_list_saturday %}
+
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="cd-schedule__group">
+                    <div class="cd-schedule__top-info"><span>Sunday</span></div>
+                    <ul>
+                        {% for schedule in schedule_list_sunday %}
+
+                            <li class="cd-schedule__event">
+                                <a data-start="{{ schedule.start_time | time:'H:i' }}"
+                                   data-end="{{ schedule.end_time | time:'H:i' }}"
+                                   data-event="event-1" href="#0">
+                                    <em class="cd-schedule__name">{{ schedule.schedule_type }}</em>
+                                </a>
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </li>
+
+
+            </ul>
+        </div>
+
+        <div class="cd-schedule-modal">
+            <header class="cd-schedule-modal__header">
+                <div class="cd-schedule-modal__content">
+                    <span class="cd-schedule-modal__date"></span>
+                    <h3 class="cd-schedule-modal__name"></h3>
+                </div>
+
+                <div class="cd-schedule-modal__header-bg"></div>
+            </header>
+
+            <div class="cd-schedule-modal__body">
+                <div class="cd-schedule-modal__event-info"></div>
+                <div class="cd-schedule-modal__body-bg"></div>
+            </div>
+
+            <a href="#0" class="cd-schedule-modal__close text-replace">Close</a>
+        </div>
+
+        <div class="cd-schedule__cover-layer"></div>
+    </div> <!-- .cd-schedule -->
+
+{% endblock %}
+
+{% block script_block %}
+    <script src="{% static "schedule/assets/js/util.js" %}"></script>
+    <!-- util functions included in the CodyHouse framework -->
+    <script src="{% static "schedule/assets/js/main.js" %}"></script>
+
+
+{% endblock %}

@@ -25,7 +25,13 @@ def home(request):
         return redirect('administration:home')
     if role == "faculty":
         return redirect('faculty:faculty home')
+    if role == "student":
+        return redirect('student:student home')
+    logout(request)
+    return redirect('index')
 
+
+"""
     l = request.user.groups.values_list('name', flat=True)  # QuerySet Object
     list1 = list(l)
     count = request.user.groups.count()
@@ -33,6 +39,7 @@ def home(request):
     list3 = list(set(list1).intersection(list2))
     context = dict(groups=list1, allow=list2, common=list3, count=count, role=role)
     return render(request, 'accounts/home.html', context)
+    """
 
 
 @unauthenticated_user
@@ -109,9 +116,10 @@ def logoutUser(request):
 def createAdmin(request):
     if request.method == "GET":
         user_form = UserForm()
-        faculty_form = AdminForm()
+        admin_form = AdminForm()
         context = dict(page_title='Admin-Create Faculty', h1_title='New Admin Account', url='createfaculty',
-                       card_title="Account Information", user_form=user_form, form=faculty_form)
+                       card_title="Account Information", user_form=user_form, form=admin_form,
+                       create_admin_li='active', admin_ul='menu-open')
         return render(request, 'accounts/admin_create_form.html', context)
     else:
         registered = False
@@ -178,13 +186,15 @@ def edit_admin(request, id=0):
 def admin_list_view(request):
     admin_list = Admin.objects.all()
     context = dict(page_title='Accounts-Admins', h1_title='Admins', url='Admins',
-                   card_title="All Admins", admin_list=admin_list)
+                   card_title="All Admins", admin_list=admin_list, next_page='admins',
+                   admin_list_li='active', admin_ul='menu-open')
     return render(request, 'accounts/admin_list.html', context)
 
 
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
 def createAdminWithExistingUser(request, id=0):
+    page = request.GET.get('next_page', 'admins')
     if id == 0:
         messages.error(request, 'Not user found against this id')
         return redirect('accounts:admins_list')
@@ -193,6 +203,18 @@ def createAdminWithExistingUser(request, id=0):
             user: User = User.objects.get(pk=id)
         except user.DoesNotExist:
             messages.error(request, 'User Not found against id or In-Valid id')
+            if page == 'users':
+                return redirect('accounts:users_list')
+            elif page == 'active_users':
+                return redirect('accounts:active_users_list')
+            elif page == 'in_active_users':
+                return redirect('accounts:un_active_users_list')
+            elif page == 'students':
+                return redirect('accounts:students_list')
+            elif page == 'admins':
+                return redirect('accounts:admins_list')
+            elif page == 'faculty':
+                return redirect('accounts:faculty_list')
             return redirect('accounts:admins_list')
 
         if Admin.objects.filter(user=user).exists():
@@ -206,7 +228,7 @@ def createAdminWithExistingUser(request, id=0):
     if request.method == "GET":
         admin_form = AdminForm()
         context = dict(page_title='Accounts-Create Admin', h1_title='New Admin Account', url='createadmin',
-                       card_title="Account Information", form=admin_form, id=id)
+                       card_title="Account Information", form=admin_form, id=id, next_page=page)
         return render(request, 'accounts/admin_create_form_with_existing_user.html', context)
     else:
         registered = False
@@ -226,13 +248,14 @@ def createAdminWithExistingUser(request, id=0):
         else:
             messages.error(request, 'Invalid Information.Check the  Wrong Information')
             context = dict(page_title='Accounts-Create admin', h1_title='New admin Account', url='createadmin',
-                           card_title="Account Information", form=admin_form, id=id)
+                           card_title="Account Information", form=admin_form, id=id, next_page=page)
             return render(request, 'accounts/admin_create_form_with_existing_user.html', context)
 
 
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
 def remove_admin_group(request, id):
+    page = request.GET.get('next_page', 'users')
     if id > 0:
         try:
             user: User = User.objects.get(pk=id)
@@ -247,6 +270,18 @@ def remove_admin_group(request, id):
             messages.error(request, 'User Not found against id or In-Valid id')
     else:
         messages.error(request, 'User Not found against id or In-Valid id')
+    if page == 'users':
+        return redirect('accounts:users_list')
+    elif page == 'active_users':
+        return redirect('accounts:active_users_list')
+    elif page == 'in_active_users':
+        return redirect('accounts:un_active_users_list')
+    elif page == 'students':
+        return redirect('accounts:students_list')
+    elif page == 'admins':
+        return redirect('accounts:admins_list')
+    elif page == 'faculty':
+        return redirect('accounts:faculty_list')
     return redirect('accounts:users_list')
 
 
@@ -259,7 +294,8 @@ def createFaculty(request):
         user_form = UserForm()
         faculty_form = FacultyForm()
         context = dict(page_title='Accounts-Create Faculty', h1_title='New Faculty Account', url='createfaculty',
-                       card_title="Account Information", user_form=user_form, form=faculty_form)
+                       card_title="Account Information", user_form=user_form, form=faculty_form,
+                       create_faculty_li='active', faculty_ul='menu-open')
         return render(request, 'accounts/faculty_create_form.html', context)
     else:
         registered = False
@@ -285,7 +321,8 @@ def createFaculty(request):
         else:
             messages.error(request, 'Invalid Information.Check the  Wrong Information')
             context = dict(page_title='Accounts-Create Faculty', h1_title='New Faculty Account', url='createfaculty',
-                           card_title="Account Information", user_form=user_form, form=faculty_form)
+                           card_title="Account Information", user_form=user_form, form=faculty_form,
+                           create_faculty_li='active', faculty_ul='menu-open')
             return render(request, 'accounts/faculty_create_form.html', context)
 
 
@@ -294,7 +331,8 @@ def createFaculty(request):
 def faculty_list_view(request):
     faculty_list = Faculty.objects.all()
     context = dict(page_title='Accounts-Faculty', h1_title='Faculty', url='Faculty',
-                   card_title="All Faculty", faculty_list=faculty_list)
+                   card_title="All Faculty", faculty_list=faculty_list, next_page='faculty',
+                   faculty_list_li='active', faculty_ul='menu-open')
     return render(request, 'accounts/faculty_list.html', context)
 
 
@@ -335,15 +373,16 @@ def edit_faculty(request, id=0):
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
 def createFacultyWithExistingUser(request, id=0):
+    page = request.GET.get('next_page', 'faculty')
     if id == 0:
         messages.error(request, 'Not user found against this id')
-        return redirect('accounts:facultys_list')
+        return redirect('accounts:faculty_list')
     else:
         try:
             user: User = User.objects.get(pk=id)
         except user.DoesNotExist:
             messages.error(request, 'User Not found against id or In-Valid id')
-            return redirect('accounts:facultys_list')
+            return redirect('accounts:faculty_list')
 
         if Faculty.objects.filter(user=user).exists():
             messages.info(request, 'Faculty With This Account Already Exist')
@@ -351,12 +390,25 @@ def createFacultyWithExistingUser(request, id=0):
             group = Group.objects.get(name='faculty')
             user.groups.add(group)
             messages.info(request, 'User is Added in Faculty Group')
+            if page == 'users':
+                return redirect('accounts:users_list')
+            elif page == 'active_users':
+                return redirect('accounts:active_users_list')
+            elif page == 'in_active_users':
+                return redirect('accounts:un_active_users_list')
+            elif page == 'students':
+                return redirect('accounts:students_list')
+            elif page == 'admins':
+                return redirect('accounts:admins_list')
+            elif page == 'faculty':
+                return redirect('accounts:faculty_list')
             return redirect('accounts:faculty_list')
 
     if request.method == "GET":
         faculty_form = FacultyForm()
         context = dict(page_title='Accounts-Create Faculty', h1_title='New Faculty Account', url='createfaculty',
-                       card_title="Account Information", form=faculty_form, id=id)
+                       card_title="Account Information", form=faculty_form, id=id, next_page=page,
+                       )
         return render(request, 'accounts/faculty_create_form_with_existing_user.html', context)
     else:
         registered = False
@@ -372,17 +424,30 @@ def createFacultyWithExistingUser(request, id=0):
             registered = True
         if registered:
             messages.success(request, 'Account created  Successfully')
+            if page == 'users':
+                return redirect('accounts:users_list')
+            elif page == 'active_users':
+                return redirect('accounts:active_users_list')
+            elif page == 'in_active_users':
+                return redirect('accounts:un_active_users_list')
+            elif page == 'students':
+                return redirect('accounts:students_list')
+            elif page == 'admins':
+                return redirect('accounts:admins_list')
+            elif page == 'faculty':
+                return redirect('accounts:faculty_list')
             return redirect('accounts:faculty_list')
         else:
             messages.error(request, 'Invalid Information.Check the  Wrong Information')
             context = dict(page_title='Accounts-Create faculty', h1_title='New faculty Account', url='createfaculty',
-                           card_title="Account Information", form=faculty_form, id=id)
+                           card_title="Account Information", form=faculty_form, id=id, next_page=page)
             return render(request, 'accounts/faculty_create_form_with_existing_user.html', context)
 
 
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
 def remove_faculty_group(request, id):
+    page = request.GET.get('next_page', 'users')
     if id > 0:
         try:
             user: User = User.objects.get(pk=id)
@@ -397,9 +462,22 @@ def remove_faculty_group(request, id):
             messages.error(request, 'User Not found against id or In-Valid id')
     else:
         messages.error(request, 'User Not found against id or In-Valid id')
+    if page == 'users':
+        return redirect('accounts:users_list')
+    elif page == 'active_users':
+        return redirect('accounts:active_users_list')
+    elif page == 'in_active_users':
+        return redirect('accounts:un_active_users_list')
+    elif page == 'students':
+        return redirect('accounts:students_list')
+    elif page == 'admins':
+        return redirect('accounts:admins_list')
+    elif page == 'faculty':
+        return redirect('accounts:faculty_list')
     return redirect('accounts:users_list')
 
 
+@login_required(login_url='accounts:login')
 def faculty_profile(request, id=0):
     if id <= 0:
         messages.error(request, 'Not faculty found against this id')
@@ -411,7 +489,8 @@ def faculty_profile(request, id=0):
             messages.error(request, 'Faculty Not found against id or In-Valid id')
             return redirect('accounts:faculty_list')
         context = dict(page_title='Accounts-Faculty Profile', h1_title='Faculty Profile', url='faculty_profile',
-                       card_title="Account Information", faculty=faculty)
+                       card_title="Account Information", faculty_profile_li='active', faculty_profile_ul='menu-open',
+                       faculty=faculty)
     return render(request, 'accounts/faculty_profile.html', context)
 
 
@@ -426,7 +505,9 @@ def faculty_profile_visitor(request, id=0):
             messages.error(request, 'Faculty Not found against id or In-Valid id')
             return redirect('index')
         context = dict(page_title='Accounts-Faculty Profile', h1_title='Faculty Profile', url='faculty_profile',
-                       card_title="Account Information", faculty=faculty)
+                       card_title="Account Information", faculty_profile_visitori='active',
+                       faculty_profile_visitor='menu-open',
+                       faculty=faculty)
     return render(request, 'accounts/faculty_profile_visitor.html', context)
 
 
@@ -438,7 +519,8 @@ def createStudent(request):
         user_form = UserForm()
         faculty_form = StudentForm()
         context = dict(page_title='Accounts-Create Student', h1_title='New Student Account', url='createstudent',
-                       card_title="Account Information", user_form=user_form, form=faculty_form)
+                       card_title="Account Information", user_form=user_form, form=faculty_form,
+                       create_student_li='active', student_ul='menu-open')
         return render(request, 'accounts/student_create_form.html', context)
     else:
         registered = False
@@ -462,13 +544,16 @@ def createStudent(request):
         else:
             messages.error(request, 'Invalid Information.Check the  Wrong Information')
             context = dict(page_title='Accounts-Create student', h1_title='New student Account', url='createstudent',
-                           card_title="Account Information", user_form=user_form, form=student_form)
+                           card_title="Account Information", user_form=user_form, form=student_form,
+                           create_student_li='active', student_ul='menu-open'
+                           )
             return render(request, 'accounts/student_create_form.html', context)
 
 
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
 def createStudentWithExistingUser(request, id=0):
+    page = request.GET.get('next_page', 'students')
     if id == 0:
         messages.error(request, 'Not user found against this id')
         return redirect('accounts:students_list')
@@ -477,6 +562,18 @@ def createStudentWithExistingUser(request, id=0):
             user: User = User.objects.get(pk=id)
         except user.DoesNotExist:
             messages.error(request, 'User Not found against id or In-Valid id')
+            if page == 'users':
+                return redirect('accounts:users_list')
+            elif page == 'active_users':
+                return redirect('accounts:active_users_list')
+            elif page == 'in_active_users':
+                return redirect('accounts:un_active_users_list')
+            elif page == 'students':
+                return redirect('accounts:students_list')
+            elif page == 'admins':
+                return redirect('accounts:admins_list')
+            elif page == 'faculty':
+                return redirect('accounts:faculty_list')
             return redirect('accounts:students_list')
 
         if Student.objects.filter(user=user).exists():
@@ -485,12 +582,25 @@ def createStudentWithExistingUser(request, id=0):
             group = Group.objects.get(name='student')
             user.groups.add(group)
             messages.info(request, 'User is Added in Student Group')
+            if page == 'users':
+                return redirect('accounts:users_list')
+            elif page == 'active_users':
+                return redirect('accounts:active_users_list')
+            elif page == 'in_active_users':
+                return redirect('accounts:un_active_users_list')
+            elif page == 'students':
+                return redirect('accounts:students_list')
+            elif page == 'admins':
+                return redirect('accounts:admins_list')
+            elif page == 'faculty':
+                return redirect('accounts:faculty_list')
             return redirect('accounts:students_list')
 
     if request.method == "GET":
         student_form = StudentForm()
         context = dict(page_title='Accounts-Create Student', h1_title='New Student Account', url='createstudent',
-                       card_title="Account Information", form=student_form, id=id)
+                       card_title="Account Information", form=student_form, id=id, next_page=page,
+                       student_ul='menu-open')
         return render(request, 'accounts/student_create_form_with_existing_user.html', context)
     else:
         registered = False
@@ -506,11 +616,24 @@ def createStudentWithExistingUser(request, id=0):
             registered = True
         if registered:
             messages.success(request, 'Account created  Successfully')
+            if page == 'users':
+                return redirect('accounts:users_list')
+            elif page == 'active_users':
+                return redirect('accounts:active_users_list')
+            elif page == 'in_active_users':
+                return redirect('accounts:un_active_users_list')
+            elif page == 'students':
+                return redirect('accounts:students_list')
+            elif page == 'admins':
+                return redirect('accounts:admins_list')
+            elif page == 'faculty':
+                return redirect('accounts:faculty_list')
             return redirect('accounts:students_list')
         else:
             messages.error(request, 'Invalid Information.Check the  Wrong Information')
             context = dict(page_title='Accounts-Create student', h1_title='New student Account', url='createstudent',
-                           card_title="Account Information", form=student_form, id=id)
+                           card_title="Account Information", form=student_form, id=id, next_page=page,
+                           student_ul='menu-open')
             return render(request, 'accounts/student_create_form_with_existing_user.html', context)
 
 
@@ -529,7 +652,8 @@ def edit_student(request, id=0):
     if request.method == "GET":
         form = StudentForm(instance=student)
         context = dict(page_title='Accounts-Edit Student', h1_title='Edit Student', url='editstudent',
-                       card_title="Account Information", form=form, id=id)
+                       card_title="Account Information", form=form, id=id,
+                       student_ul='menu-open')
         return render(request, 'accounts/student_form.html', context)
     else:
         pic = student.profile_pic
@@ -544,7 +668,8 @@ def edit_student(request, id=0):
         else:
             messages.error(request, 'Invalid Information.Check the  Wrong Information')
             context = dict(page_title='Accounts-Edit Student', h1_title='Edit Student', url='editstudent',
-                           card_title="Account Information", form=form, id=id)
+                           card_title="Account Information", form=form, id=id,
+                           student_ul='menu-open')
             return render(request, 'accounts/student_form.html', context)
 
 
@@ -553,13 +678,16 @@ def edit_student(request, id=0):
 def student_list_view(request):
     student_list = Student.objects.all()
     context = dict(page_title='Accounts-Students', h1_title='Students', url='Students',
-                   card_title="All Students", student_list=student_list)
+                   card_title="All Students", student_list=student_list, next_page='students',
+                   student_list_li='active', student_ul='menu-open'
+                   )
     return render(request, 'accounts/student_list.html', context)
 
 
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
 def remove_student_group(request, id):
+    page = request.GET.get("next_page", 'users')
     if id > 0:
         try:
             user: User = User.objects.get(pk=id)
@@ -574,16 +702,48 @@ def remove_student_group(request, id):
             messages.error(request, 'User Not found against id or In-Valid id')
     else:
         messages.error(request, 'User Not found against id or In-Valid id')
+    if page == 'users':
+        return redirect('accounts:users_list')
+    elif page == 'active_users':
+        return redirect('accounts:active_users_list')
+    elif page == 'in_active_users':
+        return redirect('accounts:un_active_users_list')
+    elif page == 'students':
+        return redirect('accounts:students_list')
+    elif page == 'admins':
+        return redirect('accounts:admins_list')
+    elif page == 'faculty':
+        return redirect('accounts:faculty_list')
     return redirect('accounts:users_list')
 
 
+@login_required(login_url='accounts:login')
+def student_profile(request, id=0):
+    if id <= 0:
+        messages.error(request, 'Not faculty found against this id')
+        return redirect('accounts:students_list')
+    else:
+        try:
+            student: Student = Student.objects.get(pk=id)
+        except Faculty.DoesNotExist:
+            messages.error(request, 'Faculty Not found against id or In-Valid id')
+            return redirect('accounts:faculty_list')
+        context = dict(page_title='Accounts-Faculty Profile', h1_title='Student Profile', url='student_profile',
+                       card_title="Account Information",
+                       student=student, student_ul='menu-open')
+    return render(request, 'accounts/student_profile.html', context)
+
+
 # User
+
+
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
 def user_list_view(request):
     user_list = User.objects.all()
     context = dict(page_title='Accounts-Users', h1_title='All Users', url='users',
-                   card_title="All Users", user_list=user_list)
+                   card_title="All Users", user_list=user_list, next_page='users',
+                   users_list_li='active', users_ul='menu-open')
     return render(request, 'accounts/user_list.html', context)
 
 
@@ -592,7 +752,8 @@ def user_list_view(request):
 def active_user_list_view(request):
     user_list = User.objects.filter(is_active=True)
     context = dict(page_title='Accounts-Users', h1_title='All Users', url='users',
-                   card_title="All Users", user_list=user_list)
+                   card_title="All Users", user_list=user_list, next_page='active_users',
+                   active_users_list_li='active', users_ul='menu-open')
     return render(request, 'accounts/user_list.html', context)
 
 
@@ -601,13 +762,15 @@ def active_user_list_view(request):
 def un_active_user_list_view(request):
     user_list = User.objects.filter(is_active=False)
     context = dict(page_title='Accounts-Users', h1_title='All Users', url='users',
-                   card_title="All Users", user_list=user_list)
+                   card_title="All Users", user_list=user_list, next_page='in_active_users',
+                   un_active_users_list_li='active', users_ul='menu-open')
     return render(request, 'accounts/user_list.html', context)
 
 
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
-def un_active_user(request, id=0):
+def un_active_user(request, id=0, page='users'):
+    page = request.GET.get('next_page', 'users')
     if id > 0:
         try:
             user: User = User.objects.get(pk=id)
@@ -622,12 +785,25 @@ def un_active_user(request, id=0):
             messages.error(request, 'User Not found against id or In-Valid id')
     else:
         messages.error(request, 'User Not found against id or In-Valid id')
+    if page == 'users':
+        return redirect('accounts:users_list')
+    elif page == 'active_users':
+        return redirect('accounts:active_users_list')
+    elif page == 'in_active_users':
+        return redirect('accounts:un_active_users_list')
+    elif page == 'students':
+        return redirect('accounts:students_list')
+    elif page == 'admins':
+        return redirect('accounts:admins_list')
+    elif page == 'faculty':
+        return redirect('accounts:faculty_list')
     return redirect('accounts:users_list')
 
 
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
-def active_user(request, id=0):
+def active_user(request, id=0, page='users'):
+    page = request.GET.get('next_page', 'users')
     if id > 0:
         try:
             user: User = User.objects.get(pk=id)
@@ -643,25 +819,63 @@ def active_user(request, id=0):
     else:
         messages.error(request, 'User Not found against id or In-Valid id')
 
+    if page == 'users':
+        return redirect('accounts:users_list')
+    elif page == 'active_users':
+        return redirect('accounts:active_users_list')
+    elif page == 'in_active_users':
+        return redirect('accounts:un_active_users_list')
+    elif page == 'students':
+        return redirect('accounts:students_list')
+    elif page == 'admins':
+        return redirect('accounts:admins_list')
+    elif page == 'faculty':
+        return redirect('accounts:faculty_list')
     return redirect('accounts:users_list')
 
 
 @login_required(login_url='accounts:login')
 @allowed_users(allowed_roles=['admin'])
 def edit_user(request, id=0):
+    page = request.GET.get('next_page', 'users')
+    print(page)
     if id == 0:
         messages.error(request, 'Not user found against this id')
+        if page == 'users':
+            return redirect('accounts:users_list')
+        elif page == 'active_users':
+            return redirect('accounts:active_users_list')
+        elif page == 'in_active_users':
+            return redirect('accounts:un_active_users_list')
+        elif page == 'students':
+            return redirect('accounts:students_list')
+        elif page == 'admins':
+            return redirect('accounts:admins_list')
+        elif page == 'faculty':
+            return redirect('accounts:faculty_list')
         return redirect('accounts:users_list')
     else:
         try:
             user: User = User.objects.get(pk=id)
         except User.DoesNotExist:
             messages.error(request, 'User Not found against id or In-Valid id')
+            if page == 'users':
+                return redirect('accounts:users_list')
+            elif page == 'active_users':
+                return redirect('accounts:active_users_list')
+            elif page == 'in_active_users':
+                return redirect('accounts:un_active_users_list')
+            elif page == 'students':
+                return redirect('accounts:students_list')
+            elif page == 'admins':
+                return redirect('accounts:admins_list')
+            elif page == 'faculty':
+                return redirect('accounts:faculty_list')
             return redirect('accounts:users_list')
     if request.method == "GET":
         form = UserForm(instance=user)
         context = dict(page_title='Accounts-Edit User', h1_title='Edit User', url='edituser',
-                       card_title="Account Information", form=form, id=id)
+                       card_title="Account Information", form=form, id=id, next_page=page)
         return render(request, 'accounts/user_form.html', context)
     else:
         registered = False
@@ -673,11 +887,23 @@ def edit_user(request, id=0):
             registered = True
         if registered:
             messages.success(request, 'Account created  Successfully')
+            if page == 'users':
+                return redirect('accounts:users_list')
+            elif page == 'active_users':
+                return redirect('accounts:active_users_list')
+            elif page == 'in_active_users':
+                return redirect('accounts:un_active_users_list')
+            elif page == 'students':
+                return redirect('accounts:students_list')
+            elif page == 'admins':
+                return redirect('accounts:admins_list')
+            elif page == 'faculty':
+                return redirect('accounts:faculty_list')
             return redirect('accounts:users_list')
         else:
             messages.error(request, 'Invalid Information.Check the  Wrong Information')
             context = dict(page_title='Accounts-Edit User', h1_title='Edit User', url='edituser',
-                           card_title="Account Information", form=form, id=id)
+                           card_title="Account Information", form=form, id=id, next_page=page)
             return render(request, 'accounts/user_form.html', context)
 
 
@@ -696,5 +922,6 @@ def change_password(request):
     else:
         form = PasswordChangeForm(request.user)
     context = dict(page_title='Accounts-Change Password', h1_title='Change Password', url='change_password',
-                   card_title="All Students", form=form)
+                   card_title="All Students", form=form, my_account_ul='menu-open',
+                   change_password_li='active')
     return render(request, 'accounts/change_password.html', context)

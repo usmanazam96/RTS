@@ -17,7 +17,7 @@ class UserForm(forms.ModelForm):
             if is_email_already_exist(email):
                 self.add_error('email', 'email already exist')
         else:
-            if is_email_already_exist(email, self.instance.pk):
+            if is_email_already_exist_id(email, self.instance.pk):
                 self.add_error('email', 'email already exist')
 
         return cleaned_data

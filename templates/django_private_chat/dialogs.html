@@ -1,4 +1,4 @@
-{% extends "base2.html" %}
+{% extends "RTS/base.html" %}
 {% load static %}
 {% load i18n %}
 {% block css %}
@@ -27,14 +27,45 @@
                             {% with dialog.opponent.username as username %}
                                 <li>
                                     <a href="{% url 'dialogs_detail' username %}">
-                                        <img id="user-{{ username }}" class="contacts-list-img img-thumbnail bg-danger"
-                                             src="{% static 'dist/img/danish.jpg' %}">
 
-                                        <div class="contacts-list-info">
+                                        {% if dialog.opponent.admin %}
+                                            <img id="user-{{ username }}"
+                                                 class="contacts-list-img img-thumbnail bg-danger"
+                                                 src="/media/{{ dialog.opponent.admin.profile_pic| default:"common/default_user.png" }}">
+
+                                            <div class="contacts-list-info">
                                                 <span class="contacts-list-name">
-                                                      {{ username | title }}
+                                                    {{ dialog.opponent.admin.first_name | title }}
+                                                     <small class="contacts-list-date float-right">admin</small>
                                                 </span>
-                                        </div>
+                                                <span class="contacts-list-msg">{{ username }}</span>
+                                            </div>
+                                        {% elif dialog.opponent.faculty %}
+                                            <img id="user-{{ username }}"
+                                                 class="contacts-list-img img-thumbnail bg-danger"
+                                                 src="/media/{{ dialog.opponent.faculty.profile_pic| default:"common/default_user.png" }}">
+
+                                            <div class="contacts-list-info">
+                                                <span class="contacts-list-name">
+                                                    {{ dialog.opponent.faculty.first_name | title }}
+                                                     <small class="contacts-list-date float-right">faculty</small>
+                                                </span>
+                                                <span class="contacts-list-msg">{{ username }}</span>
+                                            </div>
+                                        {% else %}
+                                            <img id="user-{{ username }}"
+                                                 class="contacts-list-img img-thumbnail bg-danger"
+                                                 src="/media/{{ dialog.opponent.student.profile_pic| default:"common/default_user.png" }}">
+
+                                            <div class="contacts-list-info">
+                                                <span class="contacts-list-name">
+                                                    {{ dialog.opponent.student.first_name | title }}
+                                                     <small class="contacts-list-date float-right">student</small>
+                                                </span>
+                                                <span class="contacts-list-msg">{{ username }}</span>
+                                            </div>
+                                        {% endif %}
+
                                         <!-- /.contacts-list-info -->
                                     </a>
                                 </li>
@@ -43,14 +74,45 @@
                             {% with dialog.owner.username as username %}
                                 <li>
                                     <a href="{% url 'dialogs_detail' username %}">
-                                        <img class="contacts-list-img img-thumbnail bg-danger" id="user-{{ username }}"
-                                             src="{% static 'dist/img/danish.jpg' %}">
 
-                                        <div class="contacts-list-info">
+
+                                        {% if dialog.owner.admin %}
+                                            <img id="user-{{ username }}"
+                                                 class="contacts-list-img img-thumbnail bg-danger"
+                                                 src="/media/{{ dialog.owner.admin.profile_pic| default:"common/default_user.png" }}">
+
+                                            <div class="contacts-list-info">
                                                 <span class="contacts-list-name">
-                                                     {{ username | title }}
+                                                    {{ dialog.owner.admin.first_name | title }}
+                                                     <small class="contacts-list-date float-right">admin</small>
                                                 </span>
-                                        </div>
+                                                <span class="contacts-list-msg">{{ username }}</span>
+                                            </div>
+                                        {% elif dialog.owner.faculty %}
+                                            <img id="user-{{ username }}"
+                                                 class="contacts-list-img img-thumbnail bg-danger"
+                                                 src="/media/{{ dialog.owner.faculty.profile_pic| default:"common/default_user.png" }}">
+
+                                            <div class="contacts-list-info">
+                                                <span class="contacts-list-name">
+                                                    {{ dialog.owner.faculty.first_name | title }}
+                                                     <small class="contacts-list-date float-right">faculty</small>
+                                                </span>
+                                                <span class="contacts-list-msg">{{ username }}</span>
+                                            </div>
+                                        {% else %}
+                                            <img id="user-{{ username }}"
+                                                 class="contacts-list-img img-thumbnail bg-danger"
+                                                 src="/media/{{ dialog.owner.student.profile_pic| default:"common/default_user.png" }}">
+
+                                            <div class="contacts-list-info">
+                                                <span class="contacts-list-name">
+                                                    {{ dialog.owner.student.first_name | title }}
+                                                     <small class="contacts-list-date float-right">student</small>
+                                                </span>
+                                                <span class="contacts-list-msg">{{ username }}</span>
+                                            </div>
+                                        {% endif %}
                                         <!-- /.contacts-list-info -->
                                     </a>
                                 </li>
@@ -70,7 +132,7 @@
     <div class="col-md-8">
         <div class="card direct-chat direct-chat-primary" id="" style="height:500px!important">
             <div class="card-header">
-                <h4 class="card-title">{{ opponent_username| title }}
+                <h4 class="card-title">{{ opponent_username }}
                     <sup><small class="text-success" id="online-status"
                                 style="display: none">{% trans "Online" %}</small></sup>
                     <sup><small class="text-danger" id="offline-status"
@@ -78,7 +140,7 @@
                 </h4>
                 <div class="col-md-3 col-md-offset-9">
                     <span class="float-right" style="display: none" id="typing-text">
-                        <sub><strong>{{ opponent_username | title }} {% trans "is typing..." %}</strong></sub>
+                        <sub><strong>{{ opponent_username }} {% trans "is typing..." %}</strong></sub>
                     </span>
                 </div>
 
@@ -94,12 +156,26 @@
 
                             <div class="direct-chat-infos clearfix {% if msg.read %}msg-read{% else %}msg-unread{% endif %}"
                                  data-id="{{ msg.id }}">
-                                <span class="direct-chat-name {% if msg.sender == request.user %}float-right{% else %}float-left{% endif %}">{{ msg.sender.username | title }}</span>
+                                <span class="direct-chat-name {% if msg.sender == request.user %}float-right{% else %}float-left{% endif %}">{{ msg.sender.username }}</span>
                                 <span class="direct-chat-timestamp {% if msg.sender == request.user %}float-left{% else %}float-right{% endif %}"
                                       data-livestamp="{{ msg.get_formatted_create_datetime }}">{{ msg.get_formatted_create_datetime }}</span>
                             </div>
-                            <img class="direct-chat-img" src="{% static "dist/img/danish.jpg" %}"
-                                 alt="message user image">
+
+                            {% if msg.sender.admin %}
+
+                                <img class="direct-chat-img"
+                                     src="/media/{{ msg.sender.admin.profile_pic| default:"common/default_user.png" }}"
+                                     alt="message user image">
+                            {% elif msg.sender.faculty %}
+                                <img class="direct-chat-img"
+                                     src="/media/{{ msg.sender.faculty.profile_pic| default:"common/default_user.png" }}"
+                                     alt="message user image">
+                            {% else %}
+                                <img class="direct-chat-img"
+                                     src="/media/{{ msg.sender.student.profile_pic| default:"common/default_user.png" }}"
+                                     alt="message user image">
+                            {% endif %}
+
                             <!-- /.direct-chat-img -->
                             <div class="direct-chat-text">
                                 {{ msg.text }}
@@ -121,7 +197,7 @@
                         <input type="text" id="chat-message" placeholder="{% trans 'Write a message' %}"
                                class="form-control message">
                         <span class="input-group-append">
-                      <button id="btn-send-message" class="btn btn-primary">{% trans 'Send' %}</button>
+                      <button type="button" id="btn-send-message" class="btn btn-primary">{% trans 'Send' %}</button>
                     </span>
                     </div>
                 </form>
@@ -178,11 +254,45 @@
             }
 
             function get_opponent_image() {
-                return "dist/img/danish.jpg"
+
+                {% if active_dialog.owner == request.user %}
+                    {% if active_dialog.opponent.admin %}
+                        return "/media/{{ active_dialog.opponent.admin.profile_pic| default:"common/default_user.png" }}";
+                    {% elif active_dialog.opponent.faculty%}
+                        return "/media/{{ active_dialog.opponent.faculty.profile_pic| default:"common/default_user.png" }}";
+                    {% else %}
+                        return "/media/{{ active_dialog.opponent.student.profile_pic| default:"common/default_user.png" }}";
+                    {% endif %}
+                {% else %}
+                    {% if active_dialog.owner.admin %}
+                        return "/media/{{ active_dialog.owner.admin.profile_pic| default:"common/default_user.png" }}";
+                    {% elif active_dialog.owner.faculty%}
+                        return "/media/{{ active_dialog.owner.faculty.profile_pic| default:"common/default_user.png" }}";
+                    {% else %}
+                        return "/media/{{ active_dialog.owner.student.profile_pic| default:"common/default_user.png" }}";
+                    {% endif %}
+                {% endif %}
+
             }
 
             function get_owner_image() {
-                return "dist/img/danish.jpg"
+                {% if active_dialog.owner != request.user %}
+                    {% if active_dialog.opponent.admin %}
+                        return "/media/{{ active_dialog.opponent.admin.profile_pic| default:"common/default_user.png" }}";
+                    {% elif active_dialog.opponent.faculty%}
+                        return "/media/{{ active_dialog.opponent.faculty.profile_pic| default:"common/default_user.png" }}";
+                    {% else %}
+                        return "/media/{{ active_dialog.opponent.student.profile_pic| default:"common/default_user.png" }}";
+                    {% endif %}
+                {% else %}
+                    {% if active_dialog.owner.admin %}
+                        return "/media/{{ active_dialog.owner.admin.profile_pic| default:"common/default_user.png" }}";
+                    {% elif active_dialog.owner.faculty%}
+                        return "/media/{{ active_dialog.owner.faculty.profile_pic| default:"common/default_user.png" }}";
+                    {% else %}
+                        return "/media/{{ active_dialog.owner.student.profile_pic| default:"common/default_user.png" }}";
+                    {% endif %}
+                {% endif %}
             }
 
 
@@ -198,7 +308,7 @@
 
             function addNewMessage(packet) {
 
-                var msg_class, msg_class_2,msg_right,image;
+                var msg_class, msg_class_2, msg_right, image;
                 if (packet['sender_name'] == $("#owner_username").val()) {
                     msg_class = "float-right";
                     msg_class_2 = "float-left";
@@ -212,14 +322,13 @@
                 }
 
 
-
                 var msgElem =
-                    $('<div class="direct-chat-msg '+ msg_right + '">'+
-                        '<div class="direct-chat-infos clearfix  msg-unread" data-id="' + packet.message_id +'">'+
+                    $('<div class="direct-chat-msg ' + msg_right + '">' +
+                        '<div class="direct-chat-infos clearfix  msg-unread" data-id="' + packet.message_id + '">' +
                         '<span class="direct-chat-name ' + msg_class + '" >' + packet['sender_name'] + '</span>' +
                         ' <span  class="direct-chat-timestamp ' + msg_class_2 + '"  "data-livestamp="' + packet['created'] + '"> ' + packet['created'] + '</span> ' +
                         '</div> ' +
-                        '<img class="direct-chat-img" src="/static/' + image + '" alt="message user image">' +
+                        '<img class="direct-chat-img" src="' + image + '" alt="message user image">' +
                         '<div class="direct-chat-text">'
                         + packet['message'] +
                         '</div></div>');
@@ -413,5 +522,11 @@
             scrollToLastMessage();
         });
 
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#message-nav').addClass("active");
+            $('#url-breadcumb').text('Messaging');
+        });
     </script>
 {% endblock %}

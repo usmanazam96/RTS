@@ -21,8 +21,10 @@ from student import views
 
 app_name = 'student'
 
-
 urlpatterns = [
     path("", views.home, name='student home'),
+    path("profile/", views.profile, name='profile'),
+    path("edit/profile/", views.edit_profile, name='edit profile'),
+    path("profile/visit/<int:id>", views.student_profile_visitor, name='profile visitor'),
 
 ]

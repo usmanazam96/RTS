@@ -14,10 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from RTS import views
+import notifications.urls
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
@@ -27,5 +29,8 @@ urlpatterns = [
                   path('administration/', include('administration.urls')),
                   path('faculty/', include('faculty.urls')),
                   path('student/', include('student.urls')),
+                  path('meeting/', include('meeting.urls')),
+                  path('', include('django_private_chat.urls')),
+                  url('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

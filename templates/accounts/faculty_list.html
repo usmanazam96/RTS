@@ -1,13 +1,18 @@
 {% extends "RTS/base.html" %}
 {% load static %}
+{% load my_tags %}
 {% block css_block %}
     <!-- DataTables -->
     <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
     <style>
         .scrollable-menu {
             height: auto;
-            max-height: 200px;
+            max-height: 150px;
             overflow-x: hidden;
+        }
+
+        div.dataTables_scrollBody.dropdown-visible {
+            overflow: visible !important;
         }
     </style>
 
@@ -21,7 +26,7 @@
     </div>
     <!-- /.card-header -->
     <div class="card-body">
-        <table id="tb" class="table  table-striped table-hover table-responsive-sm overflow-auto">
+        <table id="tb" class="table table-striped table-hover table-responsive-sm overflow-auto">
             <thead>
             <tr>
                 <th>Profile Pic</th>
@@ -30,8 +35,6 @@
                 <th>email</th>
                 <th>Groups</th>
                 <th>Account Status</th>
-                <th>Bio</th>
-                <th>Room</th>
                 <th>Options</th>
             </tr>
             </thead>
@@ -67,10 +70,12 @@
                             {% endfor %}
                             </ol>
                         </td>
-                        <td>{{ faculty.user.is_active }}</td>
-                        <td>{{ faculty.bio }}</td>
-                        <td>{{ faculty.room_location }}</td>
+                        {% if faculty.user.is_active %}
 
+                            <td>Active</td>
+                        {% else %}
+                            <td>In Active</td>
+                        {% endif %}
                         <td>
                             <div class="input-group-prepend">
                                 <button type="button" data-boundary="viewport" class="btn btn-default dropdown-toggle"
@@ -78,29 +83,43 @@
                                     Action
                                 </button>
                                 <div class="dropdown-menu scrollable-menu">
-                                    <a class="dropdown-item" href="{% url 'accounts:edit_faculty' faculty.id %}">Edit
-                                        Faculty</a>
-                                    <form method="post" action="{% url 'accounts:active_user' faculty.user.id %}">
-                                        {% csrf_token %}
-                                        <button class="dropdown-item" type="submit">Active User</button>
-                                    </form>
-                                    <form method="post" action="{% url 'accounts:un_active_user' faculty.user.id %}">
-                                        {% csrf_token %}
-                                        <button class="dropdown-item" type="submit">Un Active User</button>
-                                    </form>
+                                    {% if not faculty.user.is_active %}
+                                        <form method="post"
+                                              action="{% url 'accounts:active_user' faculty.user.id %}?next_page={{ next_page }}">
+                                            {% csrf_token %}
+                                            <button class="dropdown-item" type="submit">Active User</button>
+                                        </form>
+                                    {% else %}
+                                        <form method="post"
+                                              action="{% url 'accounts:un_active_user' faculty.user.id %}?next_page={{ next_page }}">
+                                            {% csrf_token %}
+                                            <button class="dropdown-item" type="submit">Un Active User</button>
+                                        </form>
+                                    {% endif %}
 
-                                    <form method="post"
-                                          action="{% url 'accounts:remove_faculty_group' faculty.user.id %}">
-                                        {% csrf_token %}
-                                        <button class="dropdown-item" type="submit">Remove Faculty Group</button>
-                                    </form>
-
-                                    <a class="dropdown-item" href="{% url 'accounts:edit_user' user.id %}">Edit User</a>
-
+                                    <a class="dropdown-item"
+                                       href="{% url 'accounts:edit_user' faculty.user.id %}?next_page={{ next_page }}">Edit
+                                        User</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item"
-                                       href="{% url 'accounts:create_faculty_with_existing_user' faculty.user.id %}">Add
+                                       href="{% url 'accounts:edit_faculty' faculty.id %} ">Edit
                                         Faculty</a>
+                                    {% if faculty.user|has_group:"faculty" %}
+                                        <form method="post"
+                                              action="{% url 'accounts:remove_faculty_group' faculty.user.id %}?next_page={{ next_page }}">
+                                            {% csrf_token %}
+                                            <button class="dropdown-item" type="submit">Remove Faculty Group
+                                            </button>
+                                        </form>
+                                    {% else %}
+
+                                        <a class="dropdown-item"
+                                           href="{% url 'accounts:create_faculty_with_existing_user' faculty.user.id %}?next_page={{ next_page }}">Add
+                                            Faculty</a>
+                                    {% endif %}
+                                    <a class="dropdown-item"
+                                       href="{% url 'accounts:faculty_profile' faculty.id %}">
+                                        Faculty Profile</a>
 
                                 </div>
                             </div>
@@ -193,10 +212,16 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "autoWidth": true,
-                "scrollX": true,
+                "autoWidth": false,
+                "scrollX": false,
             });
         });
+        $('#tb').on('show.bs.dropdown', function () {
+            $('.dataTables_scrollBody').addClass('dropdown-visible');
+        })
+            .on('hide.bs.dropdown', function () {
+                $('.dataTables_scrollBody').removeClass('dropdown-visible');
+            });
     </script>
 
 {% endblock %}

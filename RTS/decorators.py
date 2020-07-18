@@ -21,6 +21,7 @@ def allowed_users(allowed_roles=[]):
                 group = list(request.user.groups.values_list('name', flat=True))
                 common_roles = list(set(group).intersection(allowed_roles))
                 role = request.session.get('login_role', 'None')
+                role_switch = False
                 if role in common_roles:
                     return view_func(request, *args, **kwargs)
                 else:

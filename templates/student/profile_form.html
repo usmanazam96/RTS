@@ -15,7 +15,7 @@
                 <div class="card-header">
                     <div class="card-title">{{ card_title }}</div>
                 </div>
-                <form method="post" enctype="multipart/form-data" action="{% url 'administration:edit profile' %}">
+                <form method="post" enctype="multipart/form-data" action="{% url 'student:edit profile' %}">
                     <div class="card-body">
                         {% load widget_tweaks %}
                         {% csrf_token %}

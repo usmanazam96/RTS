@@ -12,7 +12,8 @@
         <div class="card-header">
             <div class="card-title">{{ card_title }}</div>
         </div>
-        <form enctype="multipart/form-data" method="post" action="{% url 'accounts:create_admin_with_existing_user' id %}">
+        <form enctype="multipart/form-data" method="post"
+              action="{% url 'accounts:create_admin_with_existing_user' id %}next_page={{ next_page }}">
             <div class="card-body">
                 {% load widget_tweaks %}
                 {% csrf_token %}

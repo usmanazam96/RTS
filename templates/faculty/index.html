@@ -1,175 +1,207 @@
 {% extends 'RTS/base.html' %}
-{% block css_block %}
-    <style>.col-container {
-        display: table; /* Make the container element behave like a table */
-        width: 100%; /* Set full-width to expand the whole page */
-    }
-
-    .col {
-        display: table-cell; /* Make elements inside the container behave like table cells */
-    }
-    </style>
-{% endblock %}
 {% block content_block %}
+    <div class="row">
+        <div class="col-sm-6">
+            <!-- TABLE: LATEST ORDERS -->
+            <div class="card">
+                <div class="card-header border-transparent">
+                    <h3 class="card-title">Today Schedule</h3>
 
-    <section class="content">
-        <div class="container-fluid">
-
-            <!-- Main row -->
-            <div class="card card-solid">
-                <div class="card-body pb-0">
-                    <div class="row ">
-                        {% for faculty in faculty_availability %}
-                            <div class="col-md-6 ">
-                                <div class="card bg-light">
-                                    <div class="card-header text-muted border-bottom-0">
-                                        {{ faculty.faculty.position | title }}
-                                    </div>
-                                    <div class="card-body pt-0">
-                                        <div class="row">
-                                            <div class="col-7">
-                                                <h2 class="lead">
-                                                    <b>{{ faculty.faculty.first_name | title }} {{ faculty.faculty.last_name | title }}</b>
-                                                </h2>
-                                                <p class="text-muted text-sm">
-                                                    <b>About: </b> {{ faculty.faculty.bio | title }} </p>
-                                                <ul class="ml-4 mb-0 fa-ul text-muted">
-                                                    <li class="small"><span class="fa-li"><i
-                                                            class="fas fa-lg fa-building"></i></span>
-                                                        {{ faculty.faculty.room_location | title }}
-                                                    </li>
-                                                    <li class="small"><span class="fa-li"><i
-                                                            class="fas fa-lg fa-envelope"></i></span> {{ faculty.availabilityMsg }}
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="col-5 text-center">
-                                                <img src="/media/{{ faculty.faculty.profile_pic | default:"common/default_user.png" }}"
-                                                     alt="user pic"
-                                                     class="img-circle img-thumbnail {{ faculty.availability|yesno:"bg-success,bg-danger" }}"
-                                                     style="max-height:128px!important; max-width:128px!important">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="text-center">
-                                            {% if request.user.is_authenticated %}
-                                                {% if request.session.login_role == 'student' %}
-                                                    <a onclick="" class="btn btn-sm btn-danger"
-                                                       style="color:white!important;">
-                                                        <i class="fas fa-bell" style="color:white!important;"></i>
-                                                        Subscribe
-                                                    </a>
-                                                    <a class="btn btn-sm btn-info" data-toggle="modal"
-                                                       data-target="#modal-approve"
-                                                       style="color:white!important;">
-                                                        <i class="fas fa-users" style="color:white!important;"></i>
-                                                        Meeting
-                                                    </a>
-                                                {% endif %}
-                                                <a href="" class="btn btn-sm btn-success">
-                                                    <i class="fas fa-comments"></i> Message
-                                                </a>
-                                                <a href=""
-                                                   class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-clock"></i> Schedule
-                                                </a>
-                                            {% endif %}
-                                            <a href="{% url 'accounts:faculty_profile' faculty.faculty.id %}"
-                                               class="btn btn-sm btn-primary">
-                                                <i class="fas fa-user"></i> Profile
-                                            </a>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        {% endfor %}
-
-
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table m-0">
+                            <thead>
+                            <th>Day</th>
+                            <th>Timing</th>
+                            <th>Type</th>
 
+                            </thead>
+                            <tbody class="table m-0">
+                            {% if schedule_list %}
+                                {% for schedule in schedule_list %}
+                                    <tr>
+                                        <td>{{ schedule.get_day_display }}</td>
+                                        <td>{{ schedule.start_time|time:'h:i A' }}
+                                            - {{ schedule.end_time|time:'h:i A' }}</td>
+                                        <td>{{ schedule.schedule_type }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="bg-info text-center text-muted"> Nothing Scheduled Today</td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
                 </div>
                 <!-- /.card-body -->
-                <div class="card-footer">
-                    <nav aria-label="Contacts Page Navigation">
-                        <ul class="pagination justify-content-center m-0">
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">5</a></li>
-                            <li class="page-item"><a class="page-link" href="#">6</a></li>
-                            <li class="page-item"><a class="page-link" href="#">7</a></li>
-                            <li class="page-item"><a class="page-link" href="#">8</a></li>
-                        </ul>
-                    </nav>
+                <div class="card-footer clearfix">
+                    <a href="{% url 'faculty:schedule_view_today' %}" class="btn btn-sm btn-info float-left">View Today Schedule</a>
+                    <a href="{% url 'faculty:schedule_view' %}" class="btn btn-sm btn-secondary float-right">View All
+                        Schedule</a>
                 </div>
                 <!-- /.card-footer -->
             </div>
-            <div class="modal fade" id="modal-approve">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Add Request</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="bootstrap-timepicker">
-                                <div class="form-group">
-                                    <label>Meeting Subject:</label><br>
-                                    <input type="text" placeholder="Meeting Subject" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label>Meeting Time:</label>
+            <!-- /.card -->
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header border-transparent">
+                    <h3 class="card-title">Availability</h3>
 
-                                    <div class="input-group date" id="timepicker" data-target-input="nearest">
-                                        <input type="text" id="timepicker"
-                                               class="form-control datetimepicker-input"
-                                               data-target="#timepicker"/>
-                                        <div class="input-group-append" data-target="#timepicker"
-                                             data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
-                                        </div>
-                                    </div>
-                                    <!-- /.input group -->
-                                </div>
-                                <!-- /.form group -->
-                            </div>
-                            <div class="bootstrap-timepicker">
-                                <div class="form-group">
-                                    <label>Meeting Date:</label>
-
-                                    <div class="input-group date" id="datepicker" data-target-input="nearest">
-                                        <input type="text" id="timepicker"
-                                               class="form-control datetimepicker-input"
-                                               data-target="#datepicker"/>
-                                        <div class="input-group-append" data-target="#datepicker"
-                                             data-toggle="datetimepicker">
-                                            <div class="input-group-text"><i class="far fa-calendar-alt"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- /.input group -->
-                                </div>
-                                <!-- /.form group -->
-                            </div>
-
-
-                        </div>
-                        <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <!-- /.modal-content -->
                 </div>
-                <!-- /.modal-dialog -->
+                <!-- /.card-header -->
+
+                <!-- /.card-body -->
+                <div class="card-body">
+                    <div class="card bg-light">
+                        <div class="card-header text-muted border-bottom-0">
+                            {{ faculty_availability.faculty.position | title }}
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h2 class="lead">
+                                        <b>{{ faculty_availability.faculty.first_name | title }} </b></h2>
+                                    <p class="text-muted text-sm">
+                                        <b>About: </b> {{ faculty_availability.faculty.bio | title }} </p>
+                                    <ul class="ml-4 mb-0 fa-ul text-muted">
+                                        <li class="small"><span class="fa-li"><i
+                                                class="fas fa-lg fa-building"></i></span>
+                                            {{ faculty_availability.faculty.room_location | title }}
+                                        </li>
+                                        <li class="small"><span class="fa-li"><i
+                                                class="fas fa-lg fa-envelope"></i></span> {{ faculty_availability.availabilityMsg }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-5 text-center">
+                                    <img src="/media/{{ faculty_availability.faculty.profile_pic | default:"common/default_user.png" }}"
+                                         alt="user pic"
+                                         class="img-circle img-thumbnail {{ faculty_availability.availability|yesno:"bg-success,bg-danger" }}"
+                                         style="max-height:128px!important; max-width:128px!important">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="card-footer clearfix">
+
+                    <a href="{% url 'faculty:availability_status' %}" class="btn btn-sm btn-secondary float-right">Availability Status</a>
+                </div>
+                <!-- /.card-footer -->
             </div>
-            <!-- /.row (main row) -->
-        </div><!-- /.container-fluid -->
-    </section>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{ count_meeting_requests }}</h3>
+
+                    <p>Meeting Requests</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <a href="{% url 'meeting:meeting_request_faculty_view' %}" class="small-box-footer">More info <i
+                        class="fas fa-arrow-alt-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ count_meeting_approve }}</h3>
+
+                    <p>Meeting Approve</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <a href="{% url 'meeting:meeting_reschedule_faculty_view' %}" class="small-box-footer">More info <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{ count_meeting_complete }}</h3>
+
+                    <p>Meeting Complete</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <a href="{% url 'meeting:meeting_complete_faculty_view' %}" class="small-box-footer">More info <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <!-- ./col -->
+        <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+                <div class="inner">
+                    <h3>{{count_meeting_reschedule }}</h3>
+
+                    <p>Meeting Reschedule</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <a href="{% url 'meeting:meeting_request_faculty_view' %}" class="small-box-footer">More info <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <!-- ./col -->
+        <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{ count_meeting_cancel }}</h3>
+
+                    <p>Meeting Cancel</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <a href="{% url 'meeting:meeting_cancel_faculty_view' %}" class="small-box-footer">More info <i
+                        class="fas fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+
+
+
+    </div>
 {% endblock %}

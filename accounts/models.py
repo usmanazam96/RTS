@@ -25,6 +25,7 @@ def content_file_admin(instance, filename):
 
 class Faculty(models.Model):
     gender_choice = (
+        (None, ' --- Select Gender --- '),
         ('M', 'Male'),
         ('F', 'Female'),
         ('O', 'Other'),
@@ -34,7 +35,7 @@ class Faculty(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField()
     room_location = models.TextField(max_length=255)
-    position = models.CharField(max_length=255, default='N/A')
+    position = models.CharField(max_length=255, default='Lecturer')
     profile_pic = models.ImageField(upload_to=content_file_faculty, blank=True, null=True)
     gender = models.CharField(max_length=2, choices=gender_choice)
 
@@ -44,6 +45,7 @@ class Faculty(models.Model):
 
 class Student(models.Model):
     gender_choice = (
+        (None, ' --- Select Gender --- '),
         ('M', 'Male'),
         ('F', 'Female'),
         ('O', 'Other'),
@@ -61,6 +63,7 @@ class Student(models.Model):
 
 class Admin(models.Model):
     gender_choice = (
+        (None, ' --- Select Gender --- '),
         ('M', 'Male'),
         ('F', 'Female'),
         ('O', 'Other'),

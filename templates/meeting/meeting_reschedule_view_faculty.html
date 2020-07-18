@@ -1,10 +1,157 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "RTS/base.html" %}
+{% load static %}
+{% load my_tags %}
+{% block css_block %}
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
+    <style>
+        .scrollable-menu {
+            height: auto;
+            max-height: 150px;
+            overflow-x: hidden;
+        }
+
+        div.dataTables_scrollBody.dropdown-visible {
+            overflow: visible !important;
+        }
+    </style>
+
+{% endblock %}
+{% load humanize %}
+{% block content_block %}
+    <div class="row">
+    <div class="col-12">
+    <div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{{ card_title }}</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body ">
+        <table id="tb" class="table table-hover text-nowrap table-responsive overflow-auto">
+            <thead>
+            <tr>
+                <th>Profile Pic</th>
+                <th>Name</th>
+                <th>Meeting Subject</th>
+                <th>Meeting Date</th>
+                <th>Meeting Time</th>
+                <th>Requested Time</th>
+                <th>Meeting Status</th>
+                <th>Options</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if meeting_list %}
+                {% for meeting in meeting_list %}
+                    <tr>
+                        {% if meeting.requester_type == 'f' %}
+
+                            <td>
+
+                                <div class="col-md-4">
+                                    {% if meeting.user.faculty.profile_pic %}
+                                        <img src="/media/{{ meeting.user.faculty.profile_pic }}" alt="User Avatar"
+                                             class="img-size-50 mr-4 img-circle">
+                                    {% else %}
+                                        <img src="/media/common/default_user.png" alt="User Avatar"
+                                             class="img-size-50 mr-4 img-circle">
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+
+
+                                {{ meeting.user.faculty.first_name }} {{ meeting.user.faculty.last_name }}
+                                <br>
+                                {{ meeting.get_requester_type_display }}
+
+
+                            </td>
+                        {% else %}
+                            <td>
+
+                                <div class="col-md-4">
+                                    {% if meeting.user.student.profile_pic %}
+                                        <img src="/media/{{ meeting.user.student.profile_pic }}" alt="User Avatar"
+                                             class="img-size-50 mr-4 img-circle">
+                                    {% else %}
+                                        <img src="/media/common/default_user.png" alt="User Avatar"
+                                             class="img-size-50 mr-4 img-circle">
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+
+<div class="small text-justify">
+                                {{ meeting.user.student.first_name }}
+                                <br>
+    <small>{{ meeting.get_requester_type_display }}</small>
+</div>
+
+                            </td>
+                        {% endif %}
+                        <td>{{ meeting.subject }}</td>
+                        <td>{{ meeting.date }}</td>
+                        <td><div class="text-*-center small">{{ meeting.start_time |time:'h:i A' }}-{{ meeting.finish_time |time:'h:i A' }}</div>
+                        </td>
+                        <td>{{ meeting.initiate_time | naturaltime }}</td>
+                        <td>{{ meeting.get_meeting_status_display }}</td>
+
+                        <td>
+                            <div class="input-group-prepend">
+                                <button type="button" data-boundary="viewport" class="btn btn-default dropdown-toggle"
+                                        data-toggle="dropdown">
+                                    Action
+                                </button>
+                                <div class="dropdown-menu scrollable-menu">
+
+
+                                      <a class="dropdown-item"
+                                       href="{% url 'meeting:meeting_detail_faculty_view' meeting.id %}">View Detail</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item"
+                                       href="{% url 'meeting:reschedule_meeting' meeting.id %}?next_page={{ next_page }}">
+                                        Re Schedule
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="9" class="text-info text-center"> No Record Found</td>
+                </tr>
+            {% endif %}
+
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
+
+
+{% block script_block %}
+    <script>
+        $(function () {
+            $('#tb').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": false,
+                "autoWidth": false,
+                "scrollX": false,
+            });
+        });
+        $('#tb').on('show.bs.dropdown', function () {
+            $('.dataTables_scrollBody').addClass('dropdown-visible');
+        })
+            .on('hide.bs.dropdown', function () {
+                $('.dataTables_scrollBody').removeClass('dropdown-visible');
+            });
+    </script>
+
+{% endblock %}

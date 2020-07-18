@@ -1,13 +1,18 @@
 {% extends "RTS/base.html" %}
 {% load static %}
+{% load my_tags %}
 {% block css_block %}
     <!-- DataTables -->
     <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.css" %}">
     <style>
         .scrollable-menu {
             height: auto;
-            max-height: 100px;
+            max-height: 150px;
             overflow-x: hidden;
+        }
+
+        div.dataTables_scrollBody.dropdown-visible {
+            overflow: visible !important;
         }
     </style>
 
@@ -21,7 +26,7 @@
     </div>
     <!-- /.card-header -->
     <div class="card-body">
-        <table id="tb" class="table  table-striped table-hover table-responsive-sm overflow-auto">
+        <table id="tb" class="table  text-nowrap table-striped table-hover table-responsive-sm overflow-auto">
             <thead>
             <tr>
                 <th>Profile Pic</th>
@@ -66,7 +71,12 @@
                             {% endfor %}
                             </ol>
                         </td>
-                        <td>{{ admin.user.is_active }}</td>
+                        {% if admin.user.is_active %}
+
+                            <td>Active</td>
+                        {% else %}
+                            <td>In Active</td>
+                        {% endif %}
 
                         <td>
                             <div class="input-group-prepend">
@@ -77,22 +87,39 @@
                                 <div class="dropdown-menu dropdown-menu-right scrollable-menu">
                                     <a class="dropdown-item" href="{% url 'accounts:edit_admin' admin.id %}">Edit
                                         Admin</a>
-                                    <form method="post" action="{% url 'accounts:active_user' admin.user.id %}">
-                                        {% csrf_token %}
-                                        <button class="dropdown-item" type="submit">Active User</button>
-                                    </form>
-                                    <form method="post" action="{% url 'accounts:un_active_user' admin.user.id %}">
-                                        {% csrf_token %}
-                                        <button class="dropdown-item" type="submit">Un Active User</button>
-                                    </form>
-                                    <form method="post" action="{% url 'accounts:remove_admin_group' admin.user.id %}">
-                                        {% csrf_token %}
-                                        <button class="dropdown-item" type="submit">Remove Admin Group</button>
-                                    </form>
-                                    <a class="dropdown-item" href="{% url 'accounts:edit_user' admin.user.id %}">Edit User</a>
-
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{% url 'accounts:create_admin_with_existing_user' user.id %}">Add Admin</a>
+                                    {% if not admin.user.is_active %}
+                                        <form method="post"
+                                              action="{% url 'accounts:active_user' admin.user.id %}?next_page={{ next_page }}">
+                                            {% csrf_token %}
+                                            <button class="dropdown-item" type="submit">Active User</button>
+                                        </form>
+                                    {% else %}
+                                        <form method="post"
+                                              action="{% url 'accounts:un_active_user' admin.user.id %}?next_page={{ next_page }}">
+                                            {% csrf_token %}
+                                            <button class="dropdown-item" type="submit">Un Active User</button>
+                                        </form>
+                                    {% endif %}
+
+                                    <a class="dropdown-item"
+                                       href="{% url 'accounts:edit_user' admin.user.id %}?next_page={{ next_page }}">Edit
+                                        User</a>
+                                    <div class="dropdown-divider"></div>
+
+
+                                    {% if admin.user|has_group:"admin" %}
+                                        <form method="post"
+                                              action="{% url 'accounts:remove_admin_group' user.id %}?next_page={{ next_page }}">
+                                            {% csrf_token %}
+                                            <button class="dropdown-item" type="submit">Remove Admin Group</button>
+                                        </form>
+
+                                    {% else %}
+                                        <a class="dropdown-item"
+                                           href="{% url 'accounts:create_admin_with_existing_user' user.id %}?next_page={{ next_page }}">Add
+                                            Admin</a>
+                                    {% endif %}
 
 
                                 </div>
@@ -123,11 +150,17 @@
                 "lengthChange": true,
                 "searching": true,
                 "ordering": true,
-                "info": true,
+                "info": false,
                 "autoWidth": false,
-                "scrollX": true,
+                "scrollX": false,
             });
         });
+        $('#tb').on('show.bs.dropdown', function () {
+            $('.dataTables_scrollBody').addClass('dropdown-visible');
+        })
+            .on('hide.bs.dropdown', function () {
+                $('.dataTables_scrollBody').removeClass('dropdown-visible');
+            });
 
     </script>
 

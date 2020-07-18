@@ -36,13 +36,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 
-    # installed app
+    # installed apps
     'widget_tweaks',
     'django_cleanup',
     'crispy_forms',
+    'django_private_chat',
+    'notifications',
 
-    # our app
+    # our apps
     'accounts',
     'administration',
     'faculty',
@@ -156,3 +159,8 @@ EMAIL_HOST_USER = 'uniqueuser456@gmail.com'
 EMAIL_HOST_PASSWORD = 'allok987'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# private_chat_app
+CHAT_WS_SERVER_HOST = 'localhost'
+CHAT_WS_SERVER_PORT = 5002
+CHAT_WS_SERVER_PROTOCOL = 'ws'

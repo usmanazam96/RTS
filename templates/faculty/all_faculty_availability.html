@@ -54,23 +54,18 @@
                                     <div class="card-footer">
                                         <div class="text-center">
                                             {% if request.user.is_authenticated %}
-                                                {% if request.session.login_role == 'student' %}
-                                                    <a onclick="" class="btn btn-sm btn-danger"
-                                                       style="color:white!important;">
-                                                        <i class="fas fa-bell" style="color:white!important;"></i>
-                                                        Subscribe
-                                                    </a>
-                                                    <a class="btn btn-sm btn-info" data-toggle="modal"
-                                                       data-target="#modal-approve"
+                                                {% if request.session.login_role == 'student' or request.session.login_role == 'faculty' %}
+                                                    <a class="btn btn-sm btn-info" href="{% url 'meeting:send_request' faculty.faculty.id %}"
                                                        style="color:white!important;">
                                                         <i class="fas fa-users" style="color:white!important;"></i>
                                                         Meeting
                                                     </a>
                                                 {% endif %}
-                                                <a href="" class="btn btn-sm btn-success">
+                                                 <a href="{% url 'dialogs_detail' faculty.faculty.user.username  %}"
+                                                   class="btn btn-sm btn-success">
                                                     <i class="fas fa-comments"></i> Message
                                                 </a>
-                                                <a href=""
+                                                <a href="{% url "faculty:schedule_chart_view_for_visitors" faculty.faculty.id %}"
                                                    class="btn btn-sm btn-primary">
                                                     <i class="fas fa-clock"></i> Schedule
                                                 </a>
@@ -84,6 +79,11 @@
                                     </div>
 
                                 </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-md-3"></div>
+                            <div class=" col-md-6 align-self-center bg-info text-center  text-bold text-capitalize"> Not
+                                Record Found
                             </div>
                         {% endfor %}
 

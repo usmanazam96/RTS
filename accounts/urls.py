@@ -31,8 +31,8 @@ urlpatterns = [
     path('students/', views.student_list_view, name="students_list"),
     path('admins/', views.admin_list_view, name="admins_list"),
     path('users/', views.user_list_view, name="users_list"),
-    path('active_users/', views.un_active_user_list_view, name="active_users_list"),
-    path('un_active_users/', views.active_user_list_view, name="un_active_users_list"),
+    path('un_active_users/', views.un_active_user_list_view, name="un_active_users_list"),
+    path('active_users/', views.active_user_list_view, name="active_users_list"),
     path('change_password/', views.change_password, name="change_password"),
     path('create_student_with_existing_user/<int:id>/', views.createStudentWithExistingUser,
          name="create_student_with_existing_user"),
@@ -51,5 +51,7 @@ urlpatterns = [
     path('remove_student_group/<int:id>/', views.remove_student_group, name="remove_student_group"),
     path('faculty_profile/<int:id>/', views.faculty_profile, name="faculty_profile"),
     path('faculty_profile_visitor/<int:id>/', views.faculty_profile_visitor, name="faculty_profile_visitor"),
+    path('student_profile/<int:id>/', views.student_profile, name="student_profile"),
+
 
 ]

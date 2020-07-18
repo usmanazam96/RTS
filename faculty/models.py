@@ -10,7 +10,7 @@ from django.utils.timesince import timesince
 class FacultyAvailability(models.Model):
     faculty = models.OneToOneField(Faculty, on_delete=models.CASCADE)
     availability = models.BooleanField(default=False)
-    availabilityMsg = models.TextField(blank=True, default="N/A")
+    availabilityMsg = models.TextField(blank=True, default="Not Available")
 
     def __str__(self):
         return f'{self.faculty.first_name}  {self.availability}'
@@ -26,6 +26,7 @@ class ScheduleType(models.Model):
 
 class Schedule(models.Model):
     WEEKDAYS = [
+        (None, ' --- Select Day --- '),
         (1, _(u"Monday")),
         (2, _(u"Tuesday")),
         (3, _(u"Wednesday")),

@@ -1,10 +1,177 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'RTS/base.html' %}
+{% block css_block %}
+    <style>.col-container {
+        display: table; /* Make the container element behave like a table */
+        width: 100%; /* Set full-width to expand the whole page */
+    }
+
+    .col {
+        display: table-cell; /* Make elements inside the container behave like table cells */
+    }
+    </style>
+{% endblock %}
+{% block content_block %}
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row mb-3 ">
+
+                <div class="ml-auto mr-3">
+                    <form class="form-inline" action="{% url 'faculty:search_availability_sidebar' %}" method="get">
+                        <div class="input-group">
+                            <input class="form-control" name="query" type="search" placeholder="Search"
+                                   aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-navbar" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Main row -->
+            <div class="card card-solid">
+                <div class="card-body pb-0">
+                    <div class="row ">
+                        {% for faculty in faculty_availability %}
+                            <div class="col-md-6 ">
+                                <div class="card bg-light">
+                                    <div class="card-header text-muted border-bottom-0">
+                                        {{ faculty.faculty.position | title }}
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div class="row">
+                                            <div class="col-7">
+                                                <h2 class="lead">
+                                                    <b>{{ faculty.faculty.first_name | title }} {{ faculty.faculty.last_name | title }}</b>
+                                                </h2>
+                                                <p class="text-muted text-sm">
+                                                    <b>About: </b> {{ faculty.faculty.bio | title }} </p>
+                                                <ul class="ml-4 mb-0 fa-ul text-muted">
+                                                    <li class="small"><span class="fa-li"><i
+                                                            class="fas fa-lg fa-building"></i></span>
+                                                        {{ faculty.faculty.room_location | title }}
+                                                    </li>
+                                                    <li class="small"><span class="fa-li"><i
+                                                            class="fas fa-lg fa-envelope"></i></span> {{ faculty.availabilityMsg }}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-5 text-center">
+                                                <img src="/media/{{ faculty.faculty.profile_pic | default:"common/default_user.png" }}"
+                                                     alt="user pic"
+                                                     class="img-circle img-thumbnail {{ faculty.availability|yesno:"bg-success,bg-danger" }}"
+                                                     style="max-height:128px!important; max-width:128px!important">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="text-center">
+                                            {% if request.session.login_role == 'student' or request.session.login_role == 'faculty' %}
+                                                    <a class="btn btn-sm btn-info" href="{% url 'meeting:send_request' faculty.faculty.id %}"
+                                                       style="color:white!important;">
+                                                        <i class="fas fa-users" style="color:white!important;"></i>
+                                                        Meeting
+                                                    </a>
+                                                {% endif %}
+                                                <a href="{% url 'dialogs_detail' faculty.faculty.user.username  %}"
+                                                   class="btn btn-sm btn-success">
+                                                    <i class="fas fa-comments"></i> Message
+                                                </a>
+                                                <a href="{% url "faculty:schedule_chart_view_for_login" faculty.faculty.id %}"
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-clock"></i> Schedule
+                                                </a>
+
+                                            <a href="{% url 'faculty:faculty_profile' faculty.faculty.id %}"
+                                               class="btn btn-sm btn-primary">
+                                                <i class="fas fa-user"></i> Profile
+                                            </a>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-md-3"></div>
+                            <div class=" col-md-6 align-self-center bg-info text-center  text-bold text-capitalize"> Not
+                                Record Found
+                            </div>
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    {% if faculty_availability.has_other_pages and query %}
+                        <nav aria-label="Contacts Page Navigation">
+                            <ul class="pagination justify-content-center m-0">
+                                {% if faculty_availability.has_previous %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ faculty_availability.previous_page_number }}&query={{ query }}">&laquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link">&laquo;</a></li>
+                                {% endif %}
+                                {% for i in faculty_availability.paginator.page_range %}
+                                    {% if faculty_availability.number == i %}
+                                        <li class="page-item active"><a
+                                                class="page-link disabled">{{ i }}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?page={{ i }}&query={{ query }}">{{ i }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if faculty_availability.has_next %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ faculty_availability.next_page_number }}&query={{ query }}">&raquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link">&raquo;</a></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% elif faculty_availability.has_other_pages %}
+                        <nav aria-label="Contacts Page Navigation">
+                            <ul class="pagination justify-content-center m-0">
+                                {% if faculty_availability.has_previous %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ faculty_availability.previous_page_number }}">&laquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link">&laquo;</a></li>
+                                {% endif %}
+                                {% for i in faculty_availability.paginator.page_range %}
+                                    {% if faculty_availability.number == i %}
+                                        <li class="page-item active"><a
+                                                class="page-link disabled">{{ i }}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if faculty_availability.has_next %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ faculty_availability.next_page_number }}">&raquo;</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link">&raquo;</a></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                </div>
+                <!-- /.card-footer -->
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+{% endblock %}

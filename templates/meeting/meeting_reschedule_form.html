@@ -1,10 +1,152 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "RTS/base.html" %}
+{% load static %}
+{% block css_block %}
+
+    <link rel="stylesheet" href="{% static "plugins/select2/css/select2.min.css" %}">
+    <link rel="stylesheet" href="{% static "plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" %}">
+    <link rel="stylesheet" href="{% static "plugins/daterangepicker/daterangepicker.css" %}">
+
+{% endblock %}
+{% block content_block %}
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="card-success">
+
+                <div class="card-header">
+                    <div class="card-title">{{ card_title }}</div>
+                </div>
+                <form method="post" action="">
+                    <div class="card-body">
+
+
+                        {% load widget_tweaks %}
+                        {% csrf_token %}
+
+                        {% for hidden_field in form.hidden_fields %}
+                            {{ hidden_field }}
+                        {% endfor %}
+                        <div class="row">
+
+
+                            <!---  Date -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    {{ form.date.label_tag }}
+                                    <div class="input-group date" id="datepicker" data-target-input="nearest">
+                                        {% if form.is_bound %}
+                                            {% if form.date.errors %}
+                                                {% render_field form.date class="form-control is-invalid datetimepicker-input" data-target="#datepicker" %}
+
+                                            {% else %}
+                                                {% render_field form.date class="form-control is-valid datetimepicker-input" data-target="#datepicker" %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% render_field form.date class="form-control datetimepicker-input" data-target="#datepicker" %}
+                                        {% endif %}
+                                        <div class="input-group-append" data-target="#datepicker"
+                                             data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-calendar"></i></div>
+                                        </div>
+                                        {% for error in form.date.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--- Meeting time-->
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    {{ form.start_time.label_tag }}
+                                    <div class="input-group date" id="timepicker" data-target-input="nearest">
+                                        {% if form.is_bound %}
+                                            {% if form.start_time.errors %}
+                                                {% render_field form.start_time class="form-control is-invalid datetimepicker-input" data-target="#timepicker" %}
+
+                                            {% else %}
+                                                {% render_field form.start_time class="form-control is-valid datetimepicker-input" data-target="#timepicker" %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% render_field form.start_time class="form-control datetimepicker-input" data-target="#timepicker" %}
+                                        {% endif %}
+                                        <div class="input-group-append" data-target="#timepicker"
+                                             data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                        </div>
+                                        {% for error in form.start_time.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!--- Duration  -->
+
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    {{ form.meeting_duration.label_tag }}
+
+                                    {% if form.is_bound %}
+                                        {% if form.meeting_duration.errors %}
+                                            {% render_field form.meeting_duration class="form-control is-invalid" %}
+                                            {% for error in form.meeting_duration.errors %}
+                                                <div class="invalid-feedback">
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% render_field form.meeting_duration class="form-control is-valid" %}
+                                        {% endif %}
+                                    {% else %}
+                                        {% render_field form.meeting_duration class="form-control" %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                    <div class="card-footer justify-content-between">
+                        <button type="reset" class="btn btn-default" data-dismiss="modal">Reset</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script_block %}
+
+    <script>
+        $(document).ready(function () {
+
+            $('#timepicker, #id_start_time').datetimepicker({
+                format: 'HH:mm',
+                pickDate: false,
+                pickSeconds: false,
+                pick12HourFormat: false
+            })
+            $('#datepicker,#id_date').datetimepicker({
+                format: 'L',
+                maskInput: true,
+            });
+        });
+        var value = "{{ d|date:"Y-m-d"  }}";
+        var date = new Date(value);
+        if (!isNaN(date.getTime())) {
+            // Months use 0 index.
+            $date_a = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+            $('#id_date').val($date_a);
+        }
+    </script>
+{% endblock %}

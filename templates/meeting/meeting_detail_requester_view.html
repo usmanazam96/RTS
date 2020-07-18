@@ -1,10 +1,438 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'RTS/base.html' %}
+{% load humanize %}
+{% load static %}
+{% load my_tags %}
+{% block css_block %}
+
+    <link rel="stylesheet" href="{% static "plugins/select2/css/select2.min.css" %}">
+    <link rel="stylesheet" href="{% static "plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" %}">
+    <link rel="stylesheet" href="{% static "plugins/daterangepicker/daterangepicker.css" %}">
+
+{% endblock %}
+{% block content_block %}
+    <div classs="row">
+        <div class="col-sm-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Meeting Time Line</h3>
+                </div>
+                <!-- /.card-header -->
+                <div id="card-1" class="card-body  overflow-auto" style="max-height:600px!important">
+                    <div class="timeline" id="timeline">
+                        <!-- timeline time label -->
+                        <div class="time-label">
+                            <span class="bg-red">{{ meeting.initiate_time | naturaltime }}</span>
+                        </div>
+                        <!-- /.timeline-label -->
+
+                        {% for detail in meeting_detail_list %}
+                            {% if detail.owner_type == 'r' %}
+                                {% if detail.meeting_status == 'request' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-handshake bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href="">you</a> sent
+                                                an request for meeting
+                                            </h3>
+
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                                <br>
+                                                <ul>
+                                                    <li><i class="fas fa-calendar"></i> date : {{ detail.date }}</li>
+                                                    <li><i class="fas fa-clock"></i> start
+                                                        time: {{ detail.start_time|time:'h:i A' }}</li>
+                                                    <li><i class="fas fa-closed-captioning"></i>
+                                                        duration: {{ detail.meeting_duration }} minute
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+                                {% elif detail.meeting_status == 'message' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-envelope bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+
+                                            <h3 class="timeline-header"><a
+                                                    href="">you</a> sent a
+                                                message
+                                            </h3>
+
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                            </div>
+                                            <div class="timeline-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+                                {% elif detail.meeting_status == 'cancel' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-ban bg-danger"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href="">you</a>
+                                                cancelled the request
+                                            </h3>
+
+
+                                            <div class="timeline-body">
+                                                {{ detail.text }}
+                                            </div>
+                                            <div class="timeline-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+                                {% elif detail.meeting_status == 'approve' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-check bg-success"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href="">you</a>
+                                                Approved the Meeting
+                                            </h3>
+
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                                <br>
+                                                <ul>
+                                                    <li><i class="fas fa-calendar"></i> date : {{ detail.date }}</li>
+                                                    <li><i class="fas fa-clock"></i> start
+                                                        time: {{ detail.start_time|time:'h:i A' }}</li>
+                                                    <li><i class="fas fa-closed-captioning"></i>
+                                                        duration: {{ detail.meeting_duration }} minute
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="timeline-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+                                {% endif %}
+                            {% elif detail.owner_type == 'f' %}
+                                {% if detail.meeting_status == 'request' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-handshake bg-info"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href="{% url 'faculty:faculty_profile' meeting.faculty.id %}"> {{ meeting.faculty.first_name }} </a>
+                                                Sent
+                                                an request for meeting
+                                            </h3>
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                            </div>
+                                            <div class="timeline-footer">
+                                                {% if detail|show_approve %}
+                                                    <div class="row">
+                                                        <form method="post"
+                                                              action="{% url 'meeting:approve_meeting' meeting.id %}?next_page={{ next_page }}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-primary btn-sm">Approve
+                                                            </button>
+                                                        </form>
+                                                        <form method="post"
+                                                              action="{% url 'meeting:cancel_meeting' meeting.id %}?next_page={{ next_page }}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger btn-sm">Reject
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+                                {% elif detail.meeting_status == 'message' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-envelope bg-gradient-info"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href="{% url 'faculty:faculty_profile' meeting.faculty.id %}">  {{ meeting.faculty.first_name }} </a>
+                                                sent
+                                                a message
+                                            </h3>
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                            </div>
+                                            <div class="timeline-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+                                {% elif detail.meeting_status == 'cancel' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-ban bg-danger"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href="{% url 'faculty:faculty_profile' meeting.faculty.id %}"> {{ meeting.faculty.first_name }} </a>
+                                                cancelled the request
+                                            </h3>
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                            </div>
+                                            <div class="timeline-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+                                {% elif detail.meeting_status == 'approve' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-check bg-success"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href="{% url 'faculty:faculty_profile' meeting.faculty.id %}">  {{ meeting.faculty.first_name }} </a>
+                                                approve the meeting
+                                                request
+                                            </h3>
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                                <br>
+                                                <ul>
+                                                    <li><i class="fas fa-calendar"></i> date : {{ detail.date }}</li>
+                                                    <li><i class="fas fa-clock"></i> start
+                                                        time: {{ detail.start_time|time:'h:i A' }}</li>
+                                                    <li><i class="fas fa-closed-captioning"></i>
+                                                        duration: {{ detail.meeting_duration }} minute
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="timeline-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+                                {% elif detail.meeting_status == 're_scheduled' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-hands bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href="{% url 'faculty:faculty_profile' meeting.faculty.id %}">  {{ meeting.faculty.first_name }} </a>
+                                                rescheduled the
+                                                meeting
+                                            </h3>
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                                <br>
+                                                <ul>
+                                                    <li><i class="fas fa-calendar"></i> date : {{ detail.date }}</li>
+                                                    <li><i class="fas fa-clock"></i> start
+                                                        time: {{ detail.start_time|time:'h:i A' }}</li>
+                                                    <li><i class="fas fa-closed-captioning"></i>
+                                                        duration: {{ detail.meeting_duration }} minute
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="timeline-footer">
+                                                {% if detail|show_approve %}
+                                                    <div class="row">
+                                                        <form method="post"
+                                                              action="{% url 'meeting:approve_meeting' meeting.id %}?next_page={{ next_page }}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-primary btn-sm">Approve
+                                                            </button>
+                                                        </form>
+                                                        <form method="post"
+                                                              action="{% url 'meeting:cancel_meeting' meeting.id %}?next_page={{ next_page }}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger btn-sm">Reject
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+
+                                {% endif %}
+                            {% else %}
+                                {% if detail.meeting_status == 'system_cancel' %}
+                                    <!-- timeline item -->
+                                    <div>
+                                        <i class="fas fa-envelope bg-blue"></i>
+                                        <div class="timeline-item">
+                                            <span class="time"><i
+                                                    class="fas fa-clock"></i> {{ detail.initiate_time | naturaltime }}</span>
+                                            <h3 class="timeline-header"><a
+                                                    href=""> System </a> cancelled meeting
+                                            </h3>
+
+                                            <div class="timeline-body">
+                                                {{ detail.text | default:"" }}
+                                                <br>
+
+                                            </div>
+                                            <div class="timeline-footer">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- END timeline item -->
+
+                                {% endif %}
+
+
+                            {% endif %}
+                        {% empty %}
+                            empty
+
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- END ALERTS AND CALLOUTS -->
+            {% if meeting.meeting_status != 'complete' %}
+
+
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Custom Tabs -->
+                        <div class="card">
+                            <div class="card-header d-flex p-0">
+                                <h3 class="card-title p-3">TimeLine</h3>
+                                <ul class="nav nav-pills ml-auto p-2">
+                                    <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Message</a>
+                                    </li>
+
+                                </ul>
+                            </div><!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="tab_1">
+                                        <form method="post"
+                                              action="{% url 'meeting:message_meeting' meeting.id %}?next_page={{ next_page }}">
+                                            <div class="card-body">
+                                                {% load widget_tweaks %}
+                                                {% csrf_token %}
+
+                                                {% for hidden_field in mform.hidden_fields %}
+                                                    {{ hidden_field }}
+                                                {% endfor %}
+                                                <div class="row">
+                                                    {% for field in mform.visible_fields %}
+                                                        <div class="col-sm-12">
+                                                            <div class="form-group">
+                                                                {{ field.label_tag }}
+
+                                                                {% if mform.is_bound %}
+                                                                    {% if field.errors %}
+                                                                        {% render_field field class="form-control is-invalid" %}
+                                                                        {% for error in field.errors %}
+                                                                            <div class="invalid-feedback">
+                                                                                {{ error }}
+                                                                            </div>
+                                                                        {% endfor %}
+                                                                    {% else %}
+                                                                        {% render_field field class="form-control is-valid" %}
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                    {% render_field field class="form-control" %}
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+
+                                                    {% endfor %}
+
+
+                                                </div>
+
+
+                                            </div>
+                                            <div class="card-footer">
+                                                <button type="submit" class="btn btn-info">Send</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+
+                                    <!-- /.tab-pane -->
+                                </div>
+                                <!-- /.tab-content -->
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- ./card -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+{% block script_block %}
+
+    <script>
+        $(document).ready(function () {
+
+            $('#timepicker, #id_start_time').datetimepicker({
+                format: 'HH:mm',
+                pickDate: false,
+                pickSeconds: false,
+                pick12HourFormat: false
+            })
+            $('#datepicker,#id_date').datetimepicker({
+                format: 'L',
+                maskInput: true,
+            });
+            var value = "{{ meeting.date|date:"Y-m-d"  }}";
+            var date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                // Months use 0 index.
+                $date_a = date.getMonth() + 1 + '/' + date.getDate() + '/' + date.getFullYear();
+                $('#id_date').val($date_a);
+            }
+            $('#card-1').scrollTop($('#card-1')[0].scrollHeight);
+        });
+    </script>
+{% endblock %}

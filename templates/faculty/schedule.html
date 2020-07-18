@@ -20,7 +20,7 @@
             <!-- small box -->
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Visting Hours</h3>
+                    <h3 class="card-title">Schedule</h3>
                 </div>
                 <!-- /.card-header -->
 
@@ -48,9 +48,11 @@
                                                 </a>
                                             </div>
                                             <div class="col-sm-6">
-                                                <form method="post" onsubmit="confirm('Do you really want to delete the schedule?')" action="{% url 'faculty:remove_schedule' schedule.id %}">
+                                                <form method="post"
+                                                      onsubmit="confirm('Do you really want to delete the schedule?')"
+                                                      action="{% url 'faculty:remove_schedule' schedule.id %}">
                                                     {% csrf_token %}
-                                                    <button  type="submit"
+                                                    <button type="submit"
                                                             class="btn btn-block btn-outline-danger">Remove
                                                     </button>
                                                 </form>
@@ -71,12 +73,12 @@
 
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#modal_create">Add
-                        Visiting Hours
+                        Schedule
                     </button>
-                    <button onclick="" class="btn btn-primary" style="float:right!important;">
+                    <a href="{% url 'faculty:schedule_chart_view' %}" class="btn btn-primary" style="float:right!important;">
 
                         View Complete Schedule
-                    </button>
+                    </a>
                 </div>
 
             </div>
@@ -101,21 +103,24 @@
                 </div>
                 <form method="post" action="{% url 'faculty:create_schedule' %}">
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12">
-                                {% if messages %}
-                                    {% for message in messages %}
-                                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
-                                             role="alert">
-                                            {{ message }}
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
+                        {% if form.is_bound %}
+                            <div class="row">
+                                <div class="col-12">
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                                                 role="alert">
+                                                {{ message }}
+                                                <button type="button" class="close" data-dismiss="alert"
+                                                        aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
 
                         {% load widget_tweaks %}
                         {% csrf_token %}
